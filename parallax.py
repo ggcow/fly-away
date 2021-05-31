@@ -19,6 +19,7 @@ class Layer(pygame.sprite.Sprite):
         surf.blit(image, (image.get_width(), 0))
         surf.blit(image, (image.get_width() * 2, 0))
         surf.blit(image, (image.get_width() * 3, 0))
+        surf.convert_alpha()
         image = surf
         self.speed = speed
         self.image = image
@@ -35,10 +36,9 @@ class Layer(pygame.sprite.Sprite):
 
     def render(self):
         screen.blit(self.image,
-                    pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
+                    (0, 0),
                     pygame.Rect(int(self.scrolling * self.w), 0,
-                                int(self.scrolling * self.w + SCREEN_WIDTH), SCREEN_HEIGHT)
-                    )
+                                SCREEN_WIDTH, SCREEN_HEIGHT))
         if self.w * (1 - self.scrolling) < SCREEN_WIDTH:
             screen.blit(self.image,
                         pygame.Rect(int(self.w * (1 - self.scrolling)), 0, SCREEN_WIDTH, SCREEN_HEIGHT),
