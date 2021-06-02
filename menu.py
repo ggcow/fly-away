@@ -17,10 +17,6 @@ from common import (
 )
 
 font = pygame.font.Font('menu_font.ttf', 30)
-JOY_UP = 1
-JOY_DOWN = -1
-deadzone = 0.7
-JOYSTICK_DELAY = 0.130
 
 
 class Action(Enum):
@@ -35,7 +31,9 @@ class Action(Enum):
 
 class Menu:
     def __init__(self):
-        self.joy_delay = JOYSTICK_DELAY
+        self.deadzone = 0.7
+        self.JOYSTICK_DELAY = 0.130
+        self.joy_delay = self.JOYSTICK_DELAY
         self.time = time.monotonic()
         self.unicode = []
 
