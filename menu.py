@@ -88,17 +88,19 @@ def menu():
     pygame.font.init()
     position = 0
     clock = pygame.time.Clock()
-    options = ('Start', 'Settings', 'Credits', 'Best scores')
+    options = ('Start', 'Exit')
     n = len(options)
     while True:
         for event in m.poll_events():
-            if event == Action.BACK or event == Action.QUIT:
+            if event == Action.QUIT:
                 return Command.EXIT
             if event == Action.ENTER:
                 if position == options.index('Start'):
                     name = menu_name()
                     if name != Command.BACK:
                         return name
+                elif position == options.index('Exit'):
+                    return Command.EXIT
             if event == Action.DOWN:
                 position = min(position + 1, n - 1)
             if event == Action.UP:
