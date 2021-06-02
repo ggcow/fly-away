@@ -44,11 +44,11 @@ def game():
         pygame.display.flip()
 
         t = time.monotonic_ns()
-        delta = (t - last_time) / 10_000_000
+        delta = (t - last_time) / 1_000_000
         last_time = t
         time_count += delta
         frame_count += 1
-        if time_count > 100:
+        if time_count > 1000:
             time_count = 0
             print("FPS : " + str(frame_count))
             frame_count = 0
