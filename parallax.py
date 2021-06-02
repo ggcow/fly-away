@@ -28,7 +28,7 @@ class Layer(pygame.sprite.Sprite):
         self.scrolling = 0
 
     def update(self, delta):
-        self.scrolling += self.speed * direction * delta / self.w
+        self.scrolling += self.speed * direction * delta * SCREEN_WIDTH / self.w / 1000
         if self.scrolling > 1:
             self.scrolling = 0
         elif self.scrolling < 0:

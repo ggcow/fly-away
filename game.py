@@ -14,6 +14,7 @@ def game():
     delta = 0
     time_count = 0
     frame_count = 0
+    clock = pygame.time.Clock()
 
     background_parallax = parallax.Parallax()
     plane = player.Player()
@@ -42,6 +43,8 @@ def game():
         plane.render()
 
         pygame.display.flip()
+
+        clock.tick(60)
 
         t = time.monotonic_ns()
         delta = (t - last_time) / 1_000_000
