@@ -3,8 +3,6 @@ import pygame
 
 from common import (
     screen,
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH
 )
 
 direction = 1
@@ -13,22 +11,32 @@ direction = 1
 class Layer(pygame.sprite.Sprite):
     def __init__(self, image: pygame.Surface, speed):
         super(Layer, self).__init__()
-        surf = pygame.Surface((image.get_width() * 4, image.get_height()))
-        surf.set_colorkey((0, 0, 0))
-        surf.blit(image, (0, 0))
-        surf.blit(image, (image.get_width(), 0))
-        surf.blit(image, (image.get_width() * 2, 0))
-        surf.blit(image, (image.get_width() * 3, 0))
-        surf.convert_alpha()
-        image = surf
-        self.speed = speed
+        self.image_source = image
         self.image = image
-        self.w = image.get_width()
-        self.h = image.get_height()
+        self.w = self.image.get_width()
+        self.h = self.image.get_height()
+        self.resize()
+        self.speed = speed
         self.scrolling = 0
 
+    def resize(self):
+        self.image = pygame.transform.scale(
+            self.image_source,
+            (int(screen.get_height() * self.image_source.get_width() / self.image_source.get_height()),
+             screen.get_height()))
+        surf = pygame.Surface((self.image.get_width() * 4, self.image.get_height()))
+        surf.set_colorkey((0, 0, 0))
+        surf.blit(self.image, (0, 0))
+        surf.blit(self.image, (self.image.get_width(), 0))
+        surf.blit(self.image, (self.image.get_width() * 2, 0))
+        surf.blit(self.image, (self.image.get_width() * 3, 0))
+        surf.convert_alpha()
+        self.image = surf
+        self.w = self.image.get_width()
+        self.h = self.image.get_height()
+
     def update(self, delta):
-        self.scrolling += self.speed * direction * delta * SCREEN_WIDTH / self.w / 1000
+        self.scrolling += self.speed * direction * delta * screen.get_width() / self.w / 1000
         if self.scrolling > 1:
             self.scrolling = 0
         elif self.scrolling < 0:
@@ -38,27 +46,28 @@ class Layer(pygame.sprite.Sprite):
         screen.blit(self.image,
                     (0, 0),
                     pygame.Rect(int(self.scrolling * self.w), 0,
-                                SCREEN_WIDTH, SCREEN_HEIGHT))
-        if self.w * (1 - self.scrolling) < SCREEN_WIDTH:
+                                screen.get_width(), screen.get_height()))
+        if self.w * (1 - self.scrolling) < screen.get_width():
             screen.blit(self.image,
-                        pygame.Rect(int(self.w * (1 - self.scrolling)), 0, SCREEN_WIDTH, SCREEN_HEIGHT),
-                        pygame.Rect(0, 0, SCREEN_WIDTH - int(self.w * (1 - self.scrolling)), self.h))
+                        pygame.Rect(int(self.w * (1 - self.scrolling)), 0, screen.get_width(), screen.get_height()),
+                        pygame.Rect(0, 0, screen.get_width() - int(self.w * (1 - self.scrolling)), self.h))
 
 
 class Parallax:
     def __init__(self):
-        self.w = SCREEN_WIDTH
+        self.w = screen.get_width()
         self.layers = []
         file_names = sorted(glob.glob("parallax/*.png"))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i]).convert_alpha()
-            image = pygame.transform.scale(
-                image,
-                (int(SCREEN_HEIGHT * image.get_width() / image.get_height()), SCREEN_HEIGHT))
             layer = Layer(image, i / 8)
             layer._layer = i - 20
             layer.scrolling = 0
             self.layers.append(layer)
+
+    def resize(self):
+        for layer in self.layers:
+            layer.resize()
 
     def update(self, delta):
         for layer in self.layers:

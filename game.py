@@ -6,6 +6,7 @@ from pygame.locals import (
     K_ESCAPE,
 )
 
+import common
 import player
 
 
@@ -14,7 +15,7 @@ def game():
     delta = 0
     time_count = 0
     frame_count = 0
-    clock = pygame.time.Clock()
+    # clock = pygame.time.Clock()
 
     background_parallax = parallax.Parallax()
     plane = player.Player()
@@ -33,6 +34,9 @@ def game():
                     joy_value.x = event.value
                 elif event.axis == 1:
                     joy_value.y = event.value
+            elif event.type == pygame.VIDEORESIZE:
+                background_parallax.resize()
+                plane.resize()
 
         keys = pygame.key.get_pressed()
 
@@ -44,7 +48,7 @@ def game():
 
         pygame.display.flip()
 
-        clock.tick(60)
+        # clock.tick(60)
 
         t = time.monotonic_ns()
         delta = (t - last_time) / 1_000_000

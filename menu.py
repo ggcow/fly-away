@@ -11,8 +11,6 @@ from pygame.locals import (
 from enum import Enum
 from common import (
     screen,
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH,
     Command
 )
 
@@ -109,8 +107,8 @@ def menu():
         for i in range(n):
             text = ('→ ' + options[i] + ' ←', options[i])[i != position]
             text_surf = font.render(text, False, (255, 255, 255))
-            w = SCREEN_WIDTH / 2
-            h = SCREEN_HEIGHT / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
+            w = screen.get_width() / 2
+            h = screen.get_height() / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
             screen.blit(text_surf, (w - text_surf.get_width() / 2,
                                     h - text_surf.get_height() / 2))
 
@@ -152,8 +150,8 @@ def menu_name():
             if i == options.index('Name'):
                 text += name
             text_surf = font.render(text, False, (255, 255, 255))
-            w = SCREEN_WIDTH / 2
-            h = SCREEN_HEIGHT / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
+            w = screen.get_width() / 2
+            h = screen.get_height() / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
             screen.blit(text_surf, (w - 100,
                                     h - text_surf.get_height() / 2))
         pygame.display.flip()
