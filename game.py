@@ -1,3 +1,4 @@
+import random
 import time
 import pygame
 import parallax
@@ -6,6 +7,7 @@ from pygame.locals import (
     K_ESCAPE,
 )
 
+import bird
 import common
 import player
 
@@ -15,12 +17,16 @@ def game():
     delta = 0
     time_count = 0
     frame_count = 0
-    # clock = pygame.time.Clock()
 
     background_parallax = parallax.Parallax()
     plane = player.Player()
     running = True
     joy_value = pygame.Vector2(0, 0)
+
+    birds = pygame.sprite.Group()
+
+    EVENT_ADD_BIRD = pygame.event.custom_type()
+    pygame.time.set_timer(EVENT_ADD_BIRD, 1000)
 
     while running:
         for event in pygame.event.get():
@@ -37,18 +43,21 @@ def game():
             elif event.type == pygame.VIDEORESIZE:
                 background_parallax.resize()
                 plane.resize()
+                b: bird.Bird
+                for b in birds:
+                    b.resize()
+
+            elif event.type == EVENT_ADD_BIRD:
+                birds.add(bird.Bird(random.random()))
 
         keys = pygame.key.get_pressed()
 
+        common.screen.fill((0, 0, 0))
         background_parallax.update(delta)
         plane.update(delta, keys, joy_value)
-
-        background_parallax.render()
-        plane.render()
+        birds.update(delta)
 
         pygame.display.flip()
-
-        # clock.tick(60)
 
         t = time.monotonic_ns()
         delta = (t - last_time) / 1_000_000

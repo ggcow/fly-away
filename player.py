@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.deadzone = 0.25
         self.friction = 0.7
-        self.pos = pygame.Vector2(0, screen.get_height() / 2)
+        self.pos = pygame.Vector2(0, 0.5)
         self.speed = 100
         self.acc = self.speed * 2
         self.vel = pygame.Vector2(0, 0)
@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
 
     def resize(self):
         self.image = pygame.transform.scale(
-            self.image_source, (int(screen.get_width() / 10), int(screen.get_height() / 10)))
+            self.image_source, (int(screen.get_width() / 15), int(screen.get_height() / 15)))
 
     def update(self, delta, keys: collections.abc.Sequence[bool], joy_value: pygame.Vector2):
         if abs(joy_value.x) < self.deadzone and abs(joy_value.y) < self.deadzone:
@@ -51,6 +51,8 @@ class Player(pygame.sprite.Sprite):
         self.pos.y += self.vel.y * delta / 1000 / self.acc
         self.pos.x = min(max(self.pos.x, 0), 1 - self.image.get_width() / screen.get_width())
         self.pos.y = min(max(self.pos.y, 0), 1 - self.image.get_height() / screen.get_height())
+
+        self.render()
 
     def render(self):
         screen.blit(self.image, (int(self.pos.x * screen.get_width()), int(self.pos.y * screen.get_height())))

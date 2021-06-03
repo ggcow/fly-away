@@ -1,5 +1,6 @@
 import glob
 import pygame
+from pygame.sprite import Sprite
 
 from common import (
     screen,
@@ -41,6 +42,7 @@ class Layer(pygame.sprite.Sprite):
             self.scrolling = 0
         elif self.scrolling < 0:
             self.scrolling = 1
+        self.render()
 
     def render(self):
         screen.blit(self.image,
@@ -69,11 +71,3 @@ class Parallax(pygame.sprite.Group):
         for layer in self:
             layer.resize()
 
-    def update(self, delta):
-        for layer in self.layers:
-            layer.update(delta)
-
-    def render(self):
-        screen.fill((0, 0, 0))
-        for layer in self.layers:
-            layer.render()
