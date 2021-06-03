@@ -9,8 +9,8 @@ direction = 1
 
 
 class Layer(pygame.sprite.Sprite):
-    def __init__(self, image: pygame.Surface, speed):
-        super(Layer, self).__init__()
+    def __init__(self, group: pygame.sprite.Group, image: pygame.Surface, speed):
+        super(Layer, self).__init__(group)
         self.image_source = image
         self.image = image
         self.w = self.image.get_width()
@@ -53,20 +53,20 @@ class Layer(pygame.sprite.Sprite):
                         pygame.Rect(0, 0, screen.get_width() - int(self.w * (1 - self.scrolling)), self.h))
 
 
-class Parallax:
+class Parallax(pygame.sprite.Group):
     def __init__(self):
+        super().__init__()
         self.w = screen.get_width()
-        self.layers = []
         file_names = sorted(glob.glob("parallax/*.png"))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i]).convert_alpha()
-            layer = Layer(image, i / 8)
+            layer = Layer(self, image, i / 8)
             layer._layer = i - 20
             layer.scrolling = 0
-            self.layers.append(layer)
 
     def resize(self):
-        for layer in self.layers:
+        layer: Layer
+        for layer in self:
             layer.resize()
 
     def update(self, delta):
