@@ -9,6 +9,7 @@ import common
 
 def main():
     player_score = 0
+    player_name = ''
     pygame.joystick.init()
     if pygame.joystick.get_count() > 0:
         j = pygame.joystick.Joystick(0)
@@ -22,10 +23,12 @@ def main():
         with open('scores.txt', 'r') as f:
             scores = ast.literal_eval(f.readline())
 
-    player_name = menu.menu()
-
-    if player_name != common.Command.EXIT:
-        player_score = game.game()
+    while True:
+        player_name = menu.menu(player_name)
+        if player_name != common.Command.EXIT:
+            player_score = game.game()
+        else:
+            break
 
     if player_score > 0:
         scores['Eugene'] = player_score

@@ -25,11 +25,14 @@ class Player(pygame.sprite.Sprite):
         self.vel = pygame.Vector2(0, 0)
         self.image_source = pygame.image.load('sprites/plane.png').convert_alpha()
         self.image = self.image_source
+        self.rect = pygame.Rect(0, 0, 0, 0)
         self.resize()
 
     def resize(self):
         self.image = pygame.transform.scale(
             self.image_source, (int(screen.get_width() / 15), int(screen.get_height() / 15)))
+        self.rect.w = self.image.get_width()
+        self.rect.h = self.image.get_height()
 
     def update(self, delta, keys: collections.abc.Sequence[bool], joy_value: pygame.Vector2):
         if abs(joy_value.x) < self.deadzone and abs(joy_value.y) < self.deadzone:
@@ -52,7 +55,9 @@ class Player(pygame.sprite.Sprite):
         self.pos.x = min(max(self.pos.x, 0), 1 - self.image.get_width() / screen.get_width())
         self.pos.y = min(max(self.pos.y, 0), 1 - self.image.get_height() / screen.get_height())
 
+        self.rect.x = int(self.pos.x * screen.get_width())
+        self.rect.y = int(self.pos.y * screen.get_height())
         self.render()
 
     def render(self):
-        screen.blit(self.image, (int(self.pos.x * screen.get_width()), int(self.pos.y * screen.get_height())))
+        screen.blit(self.image, self.rect)

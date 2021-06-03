@@ -25,8 +25,11 @@ def game():
 
     birds = pygame.sprite.Group()
 
-    EVENT_ADD_BIRD = pygame.event.custom_type()
-    pygame.time.set_timer(EVENT_ADD_BIRD, 1000)
+    event_add_bird = pygame.event.custom_type()
+    event_more_birds = pygame.event.custom_type()
+    event_add_bird_timer = 1000
+    pygame.time.set_timer(event_add_bird, event_add_bird_timer)
+    pygame.time.set_timer(event_more_birds, 10000)
 
     while running:
         for event in pygame.event.get():
@@ -47,8 +50,11 @@ def game():
                 for b in birds:
                     b.resize()
 
-            elif event.type == EVENT_ADD_BIRD:
-                birds.add(bird.Bird(random.random()))
+            elif event.type == event_add_bird:
+                birds.add(bird.Bird(random.random(), 0.01))
+            elif event.type == event_more_birds:
+                event_add_bird_timer *= 0.8
+                pygame.time.set_timer(event_add_bird, int(event_add_bird_timer))
 
         keys = pygame.key.get_pressed()
 
@@ -56,6 +62,11 @@ def game():
         background_parallax.update(delta)
         plane.update(delta, keys, joy_value)
         birds.update(delta)
+
+        for b in birds:
+            if pygame.sprite.collide_rect(plane, b):
+                if pygame.sprite.collide_mask(plane, b):
+                    running = False
 
         pygame.display.flip()
 

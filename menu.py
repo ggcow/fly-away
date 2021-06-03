@@ -55,17 +55,17 @@ class Menu:
             elif (keydown and event.key == K_BACKSPACE) or (joy_button_down and event.button == 2):
                 actions.append(Action.DELETE)
             elif keydown and event.key == K_DOWN or \
-                    joy_axis_motion and event.axis == 1 and event.value > deadzone and self.joy_delay == 0 \
+                    joy_axis_motion and event.axis == 1 and event.value > self.deadzone and self.joy_delay == 0 \
                     and abs(event.value) > last_joy_value:
                 actions.append(Action.DOWN)
                 if joy_axis_motion:
-                    self.joy_delay = JOYSTICK_DELAY
+                    self.joy_delay = self.JOYSTICK_DELAY
             elif keydown and event.key == K_UP or \
-                    joy_axis_motion and event.axis == 1 and event.value < -deadzone and self.joy_delay == 0 \
+                    joy_axis_motion and event.axis == 1 and event.value < -self.deadzone and self.joy_delay == 0 \
                     and abs(event.value) > last_joy_value:
                 actions.append(Action.UP)
                 if joy_axis_motion:
-                    self.joy_delay = JOYSTICK_DELAY
+                    self.joy_delay = self.JOYSTICK_DELAY
             elif keydown and event.key == K_RETURN or joy_button_down and event.button == 0:
                 actions.append(Action.ENTER)
             elif event.type == pygame.QUIT:
@@ -79,7 +79,7 @@ class Menu:
         return actions
 
 
-def menu():
+def menu(name: str):
     m = Menu()
     pygame.font.init()
     position = 0
@@ -92,7 +92,7 @@ def menu():
                 return Command.EXIT
             if event == Action.ENTER:
                 if position == options.index('Start'):
-                    name = menu_name()
+                    name = menu_name(name)
                     if name != Command.BACK:
                         return name
                 elif position == options.index('Exit'):
@@ -117,11 +117,10 @@ def menu():
         clock.tick(30)
 
 
-def menu_name():
+def menu_name(name: str):
     position = 0
     clock = pygame.time.Clock()
     options = ('Name', 'Team')
-    name = ''
     n = len(options)
     m = Menu()
     while True:
