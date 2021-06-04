@@ -84,7 +84,7 @@ def menu(name: str):
     pygame.font.init()
     position = 0
     clock = pygame.time.Clock()
-    options = ('Start', 'Exit')
+    options = ('Start', 'Credits', 'Exit')
     n = len(options)
     while True:
         for event in m.poll_events():
@@ -95,6 +95,9 @@ def menu(name: str):
                     name = menu_name(name)
                     if name != Command.BACK:
                         return name
+                elif position == options.index('Credits'):
+                    if menu_credits() == Command.EXIT:
+                        return Command.EXIT
                 elif position == options.index('Exit'):
                     return Command.EXIT
             if event == Action.DOWN:
@@ -157,3 +160,35 @@ def menu_name(name: str):
 
         clock.tick(30)
 
+
+def menu_credits():
+    clock = pygame.time.Clock()
+    m = Menu()
+    credit = ['GAME_NAME', 'Director : Eugène', 'Music by LHS']
+    pygame.mixer.music.load('lhs_rld1.xm')
+    pygame.mixer.music.play(-1)
+    t = 0
+    i = -1
+    while True:
+        for event in m.poll_events():
+            if event == Action.BACK or event == Action.ENTER:
+                pygame.mixer.music.stop()
+                return Command.BACK
+            elif event == Action.QUIT:
+                pygame.mixer.music.stop()
+                return Command.EXIT
+
+        if t == 0:
+            i += 1
+            i %= len(credit) + 2
+            screen.fill((0, 0, 0))
+            if i < len(credit):
+                text_surf = font.render(credit[i], False, (255, 255, 255))
+                w = (screen.get_width() - text_surf.get_width()) / 2
+                h = (screen.get_height() - text_surf.get_height()) / 2
+                screen.blit(text_surf, (w, h))
+            pygame.display.flip()
+
+        t += clock.tick(30)
+        if t >= 2000:
+            t = 0

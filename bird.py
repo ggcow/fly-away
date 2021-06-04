@@ -1,4 +1,6 @@
 import math
+import random
+
 import pygame
 
 from common import (
@@ -21,7 +23,7 @@ class Bird(pygame.sprite.Sprite):
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.resize()
         self.pos = pygame.Vector2(1, y)
-        self.time = 0
+        self.time = random.random() * 1000
         self.image = self.images[0]
         self.mask = self.masks[0]
 

@@ -10,6 +10,8 @@ import common
 def main():
     player_score = 0
     player_name = ''
+    pygame.mixer.init()
+    pygame.mixer.music.set_volume(0.4)
     pygame.joystick.init()
     if pygame.joystick.get_count() > 0:
         j = pygame.joystick.Joystick(0)
@@ -36,6 +38,7 @@ def main():
             f.write(scores.__str__())
 
     pygame.joystick.quit()
+    pygame.mixer.quit()
     pygame.quit()
     sys.exit(0)
 

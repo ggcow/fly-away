@@ -14,7 +14,7 @@ import player
 
 def game():
     last_time = time.monotonic_ns()
-    delta = 0
+    delta = 0.
     time_count = 0
     frame_count = 0
 
@@ -63,12 +63,18 @@ def game():
         plane.update(delta, keys, joy_value)
         birds.update(delta)
 
+        pygame.display.flip()
+
         for b in birds:
             if pygame.sprite.collide_rect(plane, b):
                 if pygame.sprite.collide_mask(plane, b):
                     running = False
+                    pygame.time.wait(1000)
 
-        pygame.display.flip()
+        # t = time.monotonic_ns()
+        # delta = (t - last_time) / 1_000_000
+        # if delta < 50 / 3:
+        #     pygame.time.wait(int(50 / 3 - delta))
 
         t = time.monotonic_ns()
         delta = (t - last_time) / 1_000_000

@@ -1,6 +1,5 @@
 import glob
 import pygame
-from pygame.sprite import Sprite
 
 from common import (
     screen,
@@ -18,26 +17,26 @@ class Layer(pygame.sprite.Sprite):
         self.h = self.image.get_height()
         self.resize()
         self.speed = speed
-        self.scrolling = 0
+        self.scrolling = 0.
 
     def resize(self):
         self.image = pygame.transform.scale(
             self.image_source,
             (int(screen.get_height() * self.image_source.get_width() / self.image_source.get_height()),
              screen.get_height()))
-        surf = pygame.Surface((self.image.get_width() * 4, self.image.get_height()))
+        surf = pygame.Surface((self.image.get_width() * 1, self.image.get_height()), pygame.HWSURFACE)
         surf.set_colorkey((0, 0, 0))
         surf.blit(self.image, (0, 0))
         surf.blit(self.image, (self.image.get_width(), 0))
-        surf.blit(self.image, (self.image.get_width() * 2, 0))
-        surf.blit(self.image, (self.image.get_width() * 3, 0))
+        # surf.blit(self.image, (self.image.get_width() * 2, 0))
+        # surf.blit(self.image, (self.image.get_width() * 3, 0))
         surf.convert_alpha()
         self.image = surf
         self.w = self.image.get_width()
         self.h = self.image.get_height()
 
     def update(self, delta):
-        self.scrolling += self.speed * direction * delta * screen.get_width() / self.w / 1000
+        self.scrolling += self.speed * direction * delta / 1000 * screen.get_width() / self.w
         if self.scrolling > 1:
             self.scrolling = 0
         elif self.scrolling < 0:
@@ -47,12 +46,12 @@ class Layer(pygame.sprite.Sprite):
     def render(self):
         screen.blit(self.image,
                     (0, 0),
-                    pygame.Rect(int(self.scrolling * self.w), 0,
+                    pygame.Rect(self.scrolling * self.w, 0,
                                 screen.get_width(), screen.get_height()))
         if self.w * (1 - self.scrolling) < screen.get_width():
             screen.blit(self.image,
-                        pygame.Rect(int(self.w * (1 - self.scrolling)), 0, screen.get_width(), screen.get_height()),
-                        pygame.Rect(0, 0, screen.get_width() - int(self.w * (1 - self.scrolling)), self.h))
+                        pygame.Rect(self.w * (1 - self.scrolling), 0, screen.get_width(), screen.get_height()),
+                        pygame.Rect(0, 0, screen.get_width() - self.w * (1 - self.scrolling), self.h))
 
 
 class Parallax(pygame.sprite.Group):
