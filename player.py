@@ -24,8 +24,8 @@ class Player(pygame.sprite.Sprite):
         self.acc = self.speed * 2
         self.vel = pygame.Vector2(0, 0)
         self.image_source = pygame.image.load('sprites/plane.png').convert_alpha()
-        self.image = self.image_source
         self.rect = pygame.Rect(0, 0, 0, 0)
+        self.mask = None
         self.resize()
 
     def resize(self):
@@ -33,6 +33,7 @@ class Player(pygame.sprite.Sprite):
             self.image_source, (int(screen.get_width() / 15), int(screen.get_height() / 15)))
         self.rect.w = self.image.get_width()
         self.rect.h = self.image.get_height()
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, delta, keys: collections.abc.Sequence[bool], joy_value: pygame.Vector2):
         if abs(joy_value.x) < self.deadzone and abs(joy_value.y) < self.deadzone:

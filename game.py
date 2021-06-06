@@ -6,14 +6,19 @@ import parallax
 from pygame.locals import (
     K_ESCAPE,
 )
+from setuptools import glob
 
 import bird
 import common
 import player
 
 
+music_names = sorted(glob.glob("music/**"))
+
+
 def game():
     last_time = time.monotonic_ns()
+    start_time = last_time
     delta = 0.
     time_count = 0
     frame_count = 0
@@ -30,6 +35,10 @@ def game():
     event_add_bird_timer = 1000
     pygame.time.set_timer(event_add_bird, event_add_bird_timer)
     pygame.time.set_timer(event_more_birds, 10000)
+
+    pygame.mixer.music.load(random.choice(music_names))
+    pygame.mixer.music.set_volume(common.MUSIC_VOLUME)
+    pygame.mixer.music.play(loops=-1, fade_ms=1000)
 
     while running:
         for event in pygame.event.get():
@@ -85,4 +94,4 @@ def game():
             time_count = 0
             print("FPS : " + str(frame_count))
             frame_count = 0
-    return 0
+    return (last_time - start_time) / 1_000_000_000

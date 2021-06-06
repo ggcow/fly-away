@@ -8,10 +8,8 @@ import common
 
 
 def main():
-    player_score = 0
     player_name = ''
     pygame.mixer.init()
-    pygame.mixer.music.set_volume(0.4)
     pygame.joystick.init()
     if pygame.joystick.get_count() > 0:
         j = pygame.joystick.Joystick(0)
@@ -25,17 +23,23 @@ def main():
         with open('scores.txt', 'r') as f:
             scores = ast.literal_eval(f.readline())
 
+    new_best: int = 0
+
     while True:
-        player_name = menu.menu(player_name)
+        player_name = menu.menu({'name': player_name, 'new_best': new_best})
         if player_name != common.Command.EXIT:
             player_score = game.game()
         else:
             break
 
-    if player_score > 0:
-        scores['Eugene'] = player_score
-        with open('scores.txt', 'w') as f:
-            f.write(scores.__str__())
+        print(str(player_name) + " : " + str(player_score))
+        if player_score > scores.get(player_name, 0):
+            new_best = player_score
+            scores[player_name] = player_score
+            with open('scores.txt', 'w') as f:
+                f.write(scores.__str__())
+        else:
+            new_best = 0
 
     pygame.joystick.quit()
     pygame.mixer.quit()

@@ -9,6 +9,8 @@ from pygame.locals import (
     K_BACKSPACE,
 )
 from enum import Enum
+
+import common
 from common import (
     screen,
     Command
@@ -79,12 +81,16 @@ class Menu:
         return actions
 
 
-def menu(name: str):
+def menu(player: dict[str, int]):
+    name = player['name']
     m = Menu()
     pygame.font.init()
     position = 0
     clock = pygame.time.Clock()
     options = ('Start', 'Credits', 'Exit')
+    pygame.mixer.music.load('menu.mp3')
+    pygame.mixer.music.set_volume(common.MUSIC_VOLUME / 2)
+    pygame.mixer.music.play(-1, fade_ms=100)
     n = len(options)
     while True:
         for event in m.poll_events():
@@ -92,12 +98,15 @@ def menu(name: str):
                 return Command.EXIT
             if event == Action.ENTER:
                 if position == options.index('Start'):
-                    name = menu_name(name)
+                    name = menu_name(name if not isinstance(name, Command) else '')
                     if name != Command.BACK:
                         return name
                 elif position == options.index('Credits'):
                     if menu_credits() == Command.EXIT:
                         return Command.EXIT
+                    pygame.mixer.music.load('menu.mp3')
+                    pygame.mixer.music.set_volume(common.MUSIC_VOLUME / 2)
+                    pygame.mixer.music.play(-1, fade_ms=100)
                 elif position == options.index('Exit'):
                     return Command.EXIT
             if event == Action.DOWN:
@@ -110,10 +119,16 @@ def menu(name: str):
         for i in range(n):
             text = ('→ ' + options[i] + ' ←', options[i])[i != position]
             text_surf = font.render(text, False, (255, 255, 255))
-            w = screen.get_width() / 2
-            h = screen.get_height() / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
-            screen.blit(text_surf, (w - text_surf.get_width() / 2,
-                                    h - text_surf.get_height() / 2))
+            x = (screen.get_width() - text_surf.get_width()) / 2
+            y = (screen.get_height() - text_surf.get_height()) / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
+            screen.blit(text_surf, (x, y))
+
+        if player['new_best'] > 0:
+            text_surf = font.render('New best for ' + str(player['name']) + ' : ' + str(round(player['new_best'], 2)),
+                                    False, (255, 255, 255))
+            x = (screen.get_width() - text_surf.get_width()) / 2
+            y = screen.get_height() / 10
+            screen.blit(text_surf, (x, y))
 
         pygame.display.flip()
 
@@ -133,7 +148,7 @@ def menu_name(name: str):
             elif event == Action.QUIT:
                 return Command.EXIT
             elif event == Action.ENTER:
-                return name
+                return Command.BACK if name == '' else name
             elif event == Action.DOWN:
                 position = min(position + 1, n - 1)
             elif event == Action.UP:
@@ -143,7 +158,7 @@ def menu_name(name: str):
                     name = name[:-1]
             elif event == Action.UNICODE:
                 if position == options.index('Name'):
-                    name += m.get_unicode()
+                    name += m.get_unicode().upper()
 
         screen.fill((0, 0, 0))
 
@@ -172,10 +187,8 @@ def menu_credits():
     while True:
         for event in m.poll_events():
             if event == Action.BACK or event == Action.ENTER:
-                pygame.mixer.music.stop()
                 return Command.BACK
             elif event == Action.QUIT:
-                pygame.mixer.music.stop()
                 return Command.EXIT
 
         if t == 0:
