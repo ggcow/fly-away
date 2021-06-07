@@ -1,38 +1,31 @@
 import glob
-from common import *
 
-direction = 1
+import numpy as np
+
+import opengl
+from common import *
+from OpenGL.GL import *
+from opengl import vao, vbo
+from ctypes import sizeof, c_float, c_void_p
 
 
 class Layer(pygame.sprite.Sprite):
     def __init__(self, group: pygame.sprite.Group, image: pygame.Surface, speed):
         super(Layer, self).__init__(group)
-        self.image_source = image
-        self.image = image
-        self.w = self.image.get_width()
-        self.h = self.image.get_height()
-        self.resize()
+        self.w = image.get_width()
+        self.h = image.get_height()
         self.speed = speed
         self.scrolling = 0.
-
-    def resize(self):
-        self.image = pygame.transform.scale(
-            self.image_source,
-            (int(screen.get_height() * self.image_source.get_width() / self.image_source.get_height()),
-             screen.get_height()))
-        surf = pygame.Surface((self.image.get_width() * 1, self.image.get_height()), pygame.HWSURFACE)
-        surf.set_colorkey((0, 0, 0))
-        surf.blit(self.image, (0, 0))
-        surf.blit(self.image, (self.image.get_width(), 0))
-        # surf.blit(self.image, (self.image.get_width() * 2, 0))
-        # surf.blit(self.image, (self.image.get_width() * 3, 0))
-        surf.convert_alpha()
-        self.image = surf
-        self.w = self.image.get_width()
-        self.h = self.image.get_height()
+        self.image_texture = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.image_texture)
+        image_data = pygame.image.tostring(image, "RGBA", True)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w, self.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
     def update(self, delta):
-        self.scrolling += self.speed * direction * delta / 1000 * screen.get_width() / self.w
+        self.scrolling += self.speed * delta / 1000 * settings.current_w / self.w / settings.current_h * self.h
         if self.scrolling > 1:
             self.scrolling = 0
         elif self.scrolling < 0:
@@ -40,29 +33,33 @@ class Layer(pygame.sprite.Sprite):
         self.render()
 
     def render(self):
-        screen.blit(self.image,
-                    (0, 0),
-                    pygame.Rect(self.scrolling * self.w, 0,
-                                screen.get_width(), screen.get_height()))
-        if self.w * (1 - self.scrolling) < screen.get_width():
-            screen.blit(self.image,
-                        pygame.Rect(self.w * (1 - self.scrolling), 0, screen.get_width(), screen.get_height()),
-                        pygame.Rect(0, 0, screen.get_width() - self.w * (1 - self.scrolling), self.h))
+        glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        portion = settings.current_w * self.h / settings.current_h / self.w
+        vertex_data = np.array([
+            -1, -1, self.scrolling, 0,
+            1, -1, self.scrolling + portion, 0,
+            1, 1, self.scrolling + portion, 1,
+            -1, 1, self.scrolling, 1
+        ], np.float32)
+        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+        glBindTexture(GL_TEXTURE_2D, self.image_texture)
+        glBindVertexArray(vao)
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+        glInvalidateBufferData(vbo)
+        glBindVertexArray(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+
 
 
 class Parallax(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
-        self.w = screen.get_width()
+        self.w = settings.current_w
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i])
             layer = Layer(self, image, i / 8)
             layer._layer = i - 20
             layer.scrolling = 0
-
-    def resize(self):
-        layer: Layer
-        for layer in self:
-            layer.resize()
 

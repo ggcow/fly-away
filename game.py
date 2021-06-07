@@ -8,8 +8,9 @@ from pygame.locals import (
 from setuptools import glob
 
 import bird
-from common import *
 import player
+from common import *
+from OpenGL.GL import *
 
 
 music_names = sorted(glob.glob(file_path('music/**')))
@@ -54,14 +55,16 @@ def game():
                 elif event.axis == 1:
                     joy_value.y = event.value
             elif event.type == pygame.VIDEORESIZE:
-                background_parallax.resize()
+                settings.update_screen(event.w, event.h)
+                glViewport(0, 0, settings.current_w, settings.current_h)
                 plane.resize()
+                bird.Bird.static_resize()
                 b: bird.Bird
                 for b in birds:
                     b.resize()
 
             elif event.type == event_add_bird:
-                birds.add(bird.Bird(random.random(), 0.01))
+                birds.add(bird.Bird(random.random() * 2 - 1, 0.01))
             elif event.type == event_more_birds:
                 event_add_bird_timer *= 0.8
                 pygame.time.set_timer(event_add_bird, int(event_add_bird_timer))
@@ -69,17 +72,19 @@ def game():
         keys = pygame.key.get_pressed()
 
         screen.fill((0, 0, 0))
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         background_parallax.update(delta)
         plane.update(delta, keys, joy_value)
         birds.update(delta)
 
         pygame.display.flip()
 
-        for b in birds:
-            if pygame.sprite.collide_rect(plane, b):
-                if pygame.sprite.collide_mask(plane, b):
-                    running = False
-                    pygame.time.wait(1000)
+        # for b in birds:
+        #     if pygame.sprite.collide_rect(plane, b):
+        #         if pygame.sprite.collide_mask(plane, b):
+        #             running = False
+        #             pygame.time.wait(1000)
 
         # t = time.monotonic_ns()
         # delta = (t - last_time) / 1_000_000

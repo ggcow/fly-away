@@ -119,15 +119,15 @@ def menu(player: dict[str, int]):
         for i in range(n):
             text = ('→ ' + options[i] + ' ←', options[i])[i != position]
             text_surf = font.render(text, False, (255, 255, 255))
-            x = (screen.get_width() - text_surf.get_width()) / 2
-            y = (screen.get_height() - text_surf.get_height()) / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
+            x = (settings.current_w - text_surf.get_width()) / 2
+            y = (settings.current_h - text_surf.get_height()) / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
             screen.blit(text_surf, (x, y))
 
         if player['score'] > 0:
             text = 'New best for ' + str(player['name']) + ' : ' if player['new_best'] else ''
             text_surf = font.render(text + str(round(player['score'], 2)), False, (255, 255, 255))
-            x = (screen.get_width() - text_surf.get_width()) / 2
-            y = screen.get_height() / 10
+            x = (settings.current_w - text_surf.get_width()) / 2
+            y = settings.current_h / 10
             screen.blit(text_surf, (x, y))
 
         pygame.display.flip()
@@ -167,8 +167,8 @@ def menu_name(name: str):
             if i == options.index('Name'):
                 text += name
             text_surf = font.render(text, False, (255, 255, 255))
-            w = screen.get_width() / 2
-            h = screen.get_height() / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
+            w = settings.current_w / 2
+            h = settings.current_h / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
             screen.blit(text_surf, (w - 100,
                                     h - text_surf.get_height() / 2))
         pygame.display.flip()
@@ -197,8 +197,8 @@ def menu_credits():
             screen.fill((0, 0, 0))
             if i < len(credit):
                 text_surf = font.render(credit[i], False, (255, 255, 255))
-                w = (screen.get_width() - text_surf.get_width()) / 2
-                h = (screen.get_height() - text_surf.get_height()) / 2
+                w = (settings.current_w - text_surf.get_width()) / 2
+                h = (settings.current_h - text_surf.get_height()) / 2
                 screen.blit(text_surf, (w, h))
             pygame.display.flip()
 

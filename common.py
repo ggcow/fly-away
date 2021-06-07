@@ -2,36 +2,48 @@ import os
 import sys
 from enum import Enum
 import pygame
+import opengl
 
 pygame.init()
 pygame.display.init()
 screen_info = pygame.display.Info()
-SCREEN_WIDTH = int(screen_info.current_w / 2)
-SCREEN_HEIGHT = int(screen_info.current_h / 2)
 
 MUSIC_VOLUME = 0.1
 
 
 class Settings:
     def __init__(self):
-        self.flags = pygame.DOUBLEBUF | pygame.RESIZABLE
+        self.flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.OPENGL
         self.fullscreen = False
         self.muted = False
-        self.screen_w = SCREEN_WIDTH
-        self.screen_h = SCREEN_HEIGHT
+        self.initial_width = int(screen_info.current_w / 2)
+        self.initial_height = int(screen_info.current_h / 2)
+        self.screen_w = self.initial_width
+        self.screen_h = self.initial_height
         self.volume = MUSIC_VOLUME
+        self.current_w = self.screen_w
+        self.current_h = self.screen_h
+
+    def update_screen(self, w: int, h: int):
+        global screen
+        self.current_w = w
+        self.current_h = h
+        screen = pygame.display.set_mode((w, h), self.flags, vsync=1)
 
     def toggle_fullscreen(self):
-        global screen
-        print(screen.get_width(), screen.get_height())
-        pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, {}))
         if self.fullscreen:
             pygame.display.init()
-            screen = pygame.display.set_mode((self.screen_w, self.screen_h), self.flags, vsync=1)
+            pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, {
+                'size': (self.screen_w, self.screen_h),
+                'w': self.screen_w, 'h': self.screen_h
+            }))
         else:
-            self.screen_w = screen.get_width()
-            self.screen_h = screen.get_height()
-            screen = pygame.display.set_mode((screen_info.current_w, screen_info.current_h), self.flags, vsync=1)
+            self.screen_w = settings.current_w
+            self.screen_h = settings.current_h
+            pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, {
+                'size': (screen_info.current_w, screen_info.current_h),
+                'w': screen_info.current_w, 'h': screen_info.current_h
+            }))
         self.fullscreen = not self.fullscreen
 
     def toggle_mute(self):
@@ -45,7 +57,9 @@ class Settings:
 
 settings = Settings()
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), settings.flags, vsync=1)
+screen = pygame.display.set_mode((settings.initial_width, settings.initial_height), settings.flags, vsync=1)
+
+opengl.init()
 
 base_path = ''
 if getattr(sys, 'frozen', False):

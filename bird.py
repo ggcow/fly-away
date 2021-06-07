@@ -1,66 +1,100 @@
 import math
 import random
 
-import pygame
+import numpy as np
 
 from common import *
 import ressources
+from OpenGL.GL import *
+from opengl import vao, vbo
 
 
 class Bird(pygame.sprite.Sprite):
+
+    image_source = ressources.bird
+    masks = []
+    sprites = 6
+    w = 0.
+    h = 0.
+    image_texture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, image_texture)
+    image_data = pygame.image.tostring(image_source, "RGBA", True)
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        image_source.get_width(),
+        image_source.get_height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
+    glBindTexture(GL_TEXTURE_2D, 0)
+
     def __init__(self, y: float, speed: float):
         super().__init__()
-        self.sprites = 6
         self.speed = speed
         self.vel = pygame.Vector2(-20, 0)
-        self.image_source = ressources.bird
-        self.image_grid = self.image_source
-        self.images = []
-        self.masks = []
-        self.w = 0
-        self.h = 0
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.resize()
         self.pos = pygame.Vector2(1, y)
         self.time = random.random() * 1000
-        self.image = self.images[0]
-        self.mask = self.masks[0]
+        self.index = 0
+        self.mask = Bird.masks[self.index]
+
+    @staticmethod
+    def static_resize():
+        Bird.w, Bird.h = 2 * settings.current_w / 18, 2 * settings.current_h / 18
+        image_grid = pygame.transform.scale(Bird.image_source, (int(Bird.w * Bird.sprites), int(Bird.h)))
+        Bird.masks.clear()
+        for i in range(Bird.sprites):
+            surf = pygame.Surface((Bird.w, image_grid.get_height()))
+            surf.set_colorkey((0, 0, 0))
+            surf.blit(image_grid, (0, 0), pygame.Rect(i * Bird.w, 0, Bird.w, Bird.h))
+            Bird.masks.append(pygame.mask.from_surface(surf.convert_alpha()))
 
     def resize(self):
-        self.image_grid = pygame.transform.scale(
-            self.image_source,
-            (int(screen.get_width() / 18 * self.sprites), int(screen.get_height() / 13)))
-        self.w = self.image_grid.get_width() / self.sprites
-        self.h = self.image_grid.get_height()
-        self.rect.w = self.w
-        self.rect.h = self.h
-        self.images.clear()
-        self.masks.clear()
-        for i in range(self.sprites):
-            surf = pygame.Surface((self.w, self.image_grid.get_height()))
-            surf.set_colorkey((0, 0, 0))
-            surf.blit(self.image_grid, (0, 0), pygame.Rect(i * self.w, 0, self.w, self.h))
-            self.images.append(surf.convert_alpha())
-            self.masks.append(pygame.mask.from_surface(self.images[i]))
+        self.rect.w = int(Bird.w)
+        self.rect.h = int(Bird.h)
 
     def update(self, delta):
         self.pos.x += self.vel.x * delta / 1000 * self.speed
         self.pos.y += self.vel.y * delta / 1000 * self.speed
 
-        if self.pos.x + self.w / self.image.get_width() <= 0:
+        if self.pos.x + self.w / settings.current_w <= -1:
             self.kill()
 
         self.time += int(delta)
         self.time %= 1000
 
-        index = math.floor(self.time / 1000 * self.sprites)
-        self.image = self.images[index]
-        self.mask = self.masks[index]
+        self.index = math.floor(self.time / 1000 * Bird.sprites)
+        self.mask = Bird.masks[self.index]
 
-        self.rect.x = int(self.pos.x * screen.get_width())
-        self.rect.y = int(self.pos.y * screen.get_height())
+        self.rect.x = int(self.pos.x * settings.current_w)
+        self.rect.y = int(self.pos.y * settings.current_h)
 
         self.render()
 
     def render(self):
-        screen.blit(self.image, self.rect)
+        glBindVertexArray(vao)
+        glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        vertex_data = np.array([
+            self.pos.x, self.pos.y,
+            self.index / Bird.sprites, 0,
+
+            self.pos.x + Bird.w / settings.current_w, self.pos.y,
+            (self.index + 1) / Bird.sprites, 0,
+
+            self.pos.x + Bird.w / settings.current_w, self.pos.y + Bird.h / settings.current_h,
+            (self.index + 1) / Bird.sprites, 1,
+
+            self.pos.x, self.pos.y + Bird.h / settings.current_h,
+            self.index / Bird.sprites, 1
+        ], np.float32)
+        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+        glBindTexture(GL_TEXTURE_2D, Bird.image_texture)
+        glBindVertexArray(vao)
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+        glInvalidateBufferData(vbo)
+        glBindVertexArray(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
