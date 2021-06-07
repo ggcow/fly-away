@@ -1,10 +1,16 @@
 import time
+
+import pygame
 from pygame.locals import (
     K_ESCAPE,
     K_DOWN,
     K_UP,
     K_RETURN,
+    K_KP_ENTER,
     K_BACKSPACE,
+    KMOD_SHIFT,
+    KMOD_CTRL,
+    KMOD_ALT
 )
 from common import *
 font = pygame.font.Font(file_path('menu_font.ttf'), 30)
@@ -39,6 +45,8 @@ class Menu:
         last_joy_value = 1
         actions = []
         for event in pygame.event.get():
+            common_event(event)
+
             keydown = event.type == pygame.KEYDOWN
             joy_axis_motion = pygame.joystick.get_init() and event.type == pygame.JOYAXISMOTION
             joy_button_down = pygame.joystick.get_init() and event.type == pygame.JOYBUTTONDOWN
@@ -59,11 +67,11 @@ class Menu:
                 actions.append(Action.UP)
                 if joy_axis_motion:
                     self.joy_delay = self.JOYSTICK_DELAY
-            elif keydown and event.key == K_RETURN or joy_button_down and event.button == 0:
+            elif keydown and event.key in (K_RETURN, K_KP_ENTER) or joy_button_down and event.button == 0:
                 actions.append(Action.ENTER)
             elif event.type == pygame.QUIT:
                 actions.append(Action.QUIT)
-            elif keydown:
+            elif keydown and not pygame.key.get_mods() & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT):
                 actions.append(Action.UNICODE)
                 self.unicode.append(event.unicode)
 
@@ -73,6 +81,7 @@ class Menu:
 
 
 def menu(player: dict[str, int]):
+    pygame.key.set_repeat(500, 70)
     name = player['name']
     m = Menu()
     pygame.font.init()

@@ -16,6 +16,7 @@ music_names = sorted(glob.glob(file_path('music/**')))
 
 
 def game():
+    pygame.key.set_repeat()
     last_time = time.monotonic_ns()
     start_time = last_time
     delta = 0.
@@ -41,6 +42,7 @@ def game():
 
     while running:
         for event in pygame.event.get():
+            common_event(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     running = False

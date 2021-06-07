@@ -7,6 +7,7 @@ from pygame.locals import (
     K_RIGHT
 )
 
+import ressources
 from common import *
 
 
@@ -19,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 100
         self.acc = self.speed * 2
         self.vel = pygame.Vector2(0, 0)
-        self.image_source = pygame.image.load(file_path('sprites/plane.png')).convert_alpha()
+        self.image_source = ressources.player
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.mask = None
         self.resize()

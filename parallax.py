@@ -56,7 +56,7 @@ class Parallax(pygame.sprite.Group):
         self.w = screen.get_width()
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
-            image = pygame.image.load(file_names[i]).convert_alpha()
+            image = pygame.image.load(file_names[i])
             layer = Layer(self, image, i / 8)
             layer._layer = i - 20
             layer.scrolling = 0

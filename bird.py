@@ -1,6 +1,10 @@
 import math
 import random
+
+import pygame
+
 from common import *
+import ressources
 
 
 class Bird(pygame.sprite.Sprite):
@@ -9,7 +13,7 @@ class Bird(pygame.sprite.Sprite):
         self.sprites = 6
         self.speed = speed
         self.vel = pygame.Vector2(-20, 0)
-        self.image_source = pygame.image.load(file_path('sprites/bird.png')).convert_alpha()
+        self.image_source = ressources.bird
         self.image_grid = self.image_source
         self.images = []
         self.masks = []
@@ -33,9 +37,10 @@ class Bird(pygame.sprite.Sprite):
         self.images.clear()
         self.masks.clear()
         for i in range(self.sprites):
-            self.images.append(pygame.Surface((self.w, self.image_grid.get_height())))
-            self.images[i].set_colorkey((0, 0, 0))
-            self.images[i].blit(self.image_grid, (0, 0), pygame.Rect(i * self.w, 0, self.w, self.h))
+            surf = pygame.Surface((self.w, self.image_grid.get_height()))
+            surf.set_colorkey((0, 0, 0))
+            surf.blit(self.image_grid, (0, 0), pygame.Rect(i * self.w, 0, self.w, self.h))
+            self.images.append(surf.convert_alpha())
             self.masks.append(pygame.mask.from_surface(self.images[i]))
 
     def update(self, delta):

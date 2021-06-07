@@ -41,6 +41,7 @@ def main():
 
     pygame.joystick.quit()
     pygame.mixer.quit()
+    pygame.display.quit()
     pygame.quit()
     sys.exit(0)
 
