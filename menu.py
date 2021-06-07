@@ -1,6 +1,4 @@
 import time
-
-import pygame
 from pygame.locals import (
     K_ESCAPE,
     K_DOWN,
@@ -8,15 +6,8 @@ from pygame.locals import (
     K_RETURN,
     K_BACKSPACE,
 )
-from enum import Enum
-
-import common
-from common import (
-    screen,
-    Command
-)
-
-font = pygame.font.Font('menu_font.ttf', 30)
+from common import *
+font = pygame.font.Font(file_path('menu_font.ttf'), 30)
 
 
 class Action(Enum):
@@ -88,8 +79,8 @@ def menu(player: dict[str, int]):
     position = 0
     clock = pygame.time.Clock()
     options = ('Start', 'Credits', 'Exit')
-    pygame.mixer.music.load('menu.mp3')
-    pygame.mixer.music.set_volume(common.MUSIC_VOLUME / 2)
+    pygame.mixer.music.load(file_path('menu.mp3'))
+    pygame.mixer.music.set_volume(MUSIC_VOLUME / 2)
     pygame.mixer.music.play(-1, fade_ms=100)
     n = len(options)
     while True:
@@ -104,8 +95,8 @@ def menu(player: dict[str, int]):
                 elif position == options.index('Credits'):
                     if menu_credits() == Command.EXIT:
                         return Command.EXIT
-                    pygame.mixer.music.load('menu.mp3')
-                    pygame.mixer.music.set_volume(common.MUSIC_VOLUME / 2)
+                    pygame.mixer.music.load(file_path('menu.mp3'))
+                    pygame.mixer.music.set_volume(MUSIC_VOLUME / 2)
                     pygame.mixer.music.play(-1, fade_ms=100)
                 elif position == options.index('Exit'):
                     return Command.EXIT
@@ -123,9 +114,9 @@ def menu(player: dict[str, int]):
             y = (screen.get_height() - text_surf.get_height()) / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
             screen.blit(text_surf, (x, y))
 
-        if player['new_best'] > 0:
-            text_surf = font.render('New best for ' + str(player['name']) + ' : ' + str(round(player['new_best'], 2)),
-                                    False, (255, 255, 255))
+        if player['score'] > 0:
+            text = 'New best for ' + str(player['name']) + ' : ' if player['new_best'] else ''
+            text_surf = font.render(text + str(round(player['score'], 2)), False, (255, 255, 255))
             x = (screen.get_width() - text_surf.get_width()) / 2
             y = screen.get_height() / 10
             screen.blit(text_surf, (x, y))
@@ -180,7 +171,7 @@ def menu_credits():
     clock = pygame.time.Clock()
     m = Menu()
     credit = ['GAME_NAME', 'Director : Eugène', 'Music by LHS']
-    pygame.mixer.music.load('lhs_rld1.xm')
+    pygame.mixer.music.load(file_path('lhs_rld1.xm'))
     pygame.mixer.music.play(-1)
     t = 0
     i = -1

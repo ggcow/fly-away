@@ -1,9 +1,5 @@
 import glob
-import pygame
-
-from common import (
-    screen,
-)
+from common import *
 
 direction = 1
 
@@ -58,7 +54,7 @@ class Parallax(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.w = screen.get_width()
-        file_names = sorted(glob.glob("parallax/*.png"))
+        file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i]).convert_alpha()
             layer = Layer(self, image, i / 8)

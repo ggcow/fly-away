@@ -1,7 +1,5 @@
 import collections.abc
 
-import pygame
-
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -9,9 +7,7 @@ from pygame.locals import (
     K_RIGHT
 )
 
-from common import (
-    screen
-)
+from common import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -23,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 100
         self.acc = self.speed * 2
         self.vel = pygame.Vector2(0, 0)
-        self.image_source = pygame.image.load('sprites/plane.png').convert_alpha()
+        self.image_source = pygame.image.load(file_path('sprites/plane.png')).convert_alpha()
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.mask = None
         self.resize()

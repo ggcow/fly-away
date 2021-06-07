@@ -1,10 +1,7 @@
 import ast
-import os
-import sys
-import pygame
 import menu
 import game
-import common
+from common import *
 
 
 def main():
@@ -16,25 +13,26 @@ def main():
         j.init()
 
     if not os.path.exists('scores.txt'):
-        with open('scores.txt', 'w'):
-            ...
+        with open('scores.txt', 'w') as f:
+            f.write('{}')
         scores = {}
     else:
         with open('scores.txt', 'r') as f:
             scores = ast.literal_eval(f.readline())
 
-    new_best: int = 0
+    player_score: int = 0
+    new_best = False
 
     while True:
-        player_name = menu.menu({'name': player_name, 'new_best': new_best})
-        if player_name != common.Command.EXIT:
+        player_name = menu.menu({'name': player_name, 'score': player_score, 'new_best': new_best})
+        if player_name != Command.EXIT:
             player_score = game.game()
         else:
             break
 
         print(str(player_name) + " : " + str(player_score))
         if player_score > scores.get(player_name, 0):
-            new_best = player_score
+            new_best = True
             scores[player_name] = player_score
             with open('scores.txt', 'w') as f:
                 f.write(scores.__str__())

@@ -1,11 +1,6 @@
 import math
 import random
-
-import pygame
-
-from common import (
-    screen
-)
+from common import *
 
 
 class Bird(pygame.sprite.Sprite):
@@ -14,7 +9,7 @@ class Bird(pygame.sprite.Sprite):
         self.sprites = 6
         self.speed = speed
         self.vel = pygame.Vector2(-20, 0)
-        self.image_source = pygame.image.load('sprites/bird.png').convert_alpha()
+        self.image_source = pygame.image.load(file_path('sprites/bird.png')).convert_alpha()
         self.image_grid = self.image_source
         self.images = []
         self.masks = []

@@ -1,6 +1,5 @@
 import random
 import time
-import pygame
 import parallax
 
 from pygame.locals import (
@@ -9,11 +8,11 @@ from pygame.locals import (
 from setuptools import glob
 
 import bird
-import common
+from common import *
 import player
 
 
-music_names = sorted(glob.glob("music/**"))
+music_names = sorted(glob.glob(file_path('music/**')))
 
 
 def game():
@@ -37,7 +36,7 @@ def game():
     pygame.time.set_timer(event_more_birds, 10000)
 
     pygame.mixer.music.load(random.choice(music_names))
-    pygame.mixer.music.set_volume(common.MUSIC_VOLUME)
+    pygame.mixer.music.set_volume(MUSIC_VOLUME)
     pygame.mixer.music.play(loops=-1, fade_ms=1000)
 
     while running:
@@ -67,7 +66,7 @@ def game():
 
         keys = pygame.key.get_pressed()
 
-        common.screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0))
         background_parallax.update(delta)
         plane.update(delta, keys, joy_value)
         birds.update(delta)
