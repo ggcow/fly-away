@@ -12,7 +12,7 @@ class Layer(pygame.sprite.Sprite):
         super(Layer, self).__init__(group)
         self.w = image.get_width()
         self.h = image.get_height()
-        self.speed = speed
+        self.speed = speed / 2
         self.scrolling = 0.
         self.image_texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)

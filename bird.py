@@ -36,7 +36,7 @@ class Bird(pygame.sprite.Sprite):
         self.vel = pygame.Vector2(-20, 0)
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.resize()
-        self.pos = pygame.Vector2(1, y)
+        self.pos = pygame.Vector2(1, (y * (2 - Bird.h / settings.current_h) - Bird.h / settings.current_h) / 2)
         self.time = random.random() * 1000
         self.index = 0
         self.mask = Bird.masks[self.index]
