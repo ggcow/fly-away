@@ -56,15 +56,12 @@ class Settings:
 
 
 settings = Settings()
-
 screen = pygame.display.set_mode((settings.initial_width, settings.initial_height), settings.flags, vsync=1)
-
 opengl.init()
 
 base_path = ''
 if getattr(sys, 'frozen', False):
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
         print('exc')

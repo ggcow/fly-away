@@ -23,9 +23,6 @@ def main():
     player_score: int = 0
     new_best = False
 
-    # a enlever
-    game.game()
-
     while True:
         player_name = menu.menu({'name': player_name, 'score': player_score, 'new_best': new_best})
         if player_name != Command.EXIT:

@@ -11,12 +11,18 @@ import bird
 import player
 from common import *
 from OpenGL.GL import *
+from opengl import tex_shader_program as shader_program
+from opengl import tex_vao as tex_vao
 
 
 music_names = sorted(glob.glob(file_path('music/**')))
 
 
 def game():
+    glUseProgram(shader_program)
+    glEnable(GL_TEXTURE_2D)
+    glEnable(GL_BLEND)
+    glBindVertexArray(tex_vao)
     pygame.key.set_repeat()
     last_time = time.monotonic_ns()
     start_time = last_time
@@ -30,6 +36,7 @@ def game():
     joy_value = pygame.Vector2(0, 0)
 
     birds = pygame.sprite.Group()
+    bird.Bird.static_resize()
 
     event_add_bird = pygame.event.custom_type()
     event_more_birds = pygame.event.custom_type()
@@ -71,9 +78,6 @@ def game():
 
         keys = pygame.key.get_pressed()
 
-        screen.fill((0, 0, 0))
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         background_parallax.update(delta)
         plane.update(delta, keys, joy_value)
         birds.update(delta)

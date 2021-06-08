@@ -1,6 +1,8 @@
 import time
 
-import pygame
+import numpy as np
+import pygame.time
+from OpenGL.GL import *
 from pygame.locals import (
     K_ESCAPE,
     K_DOWN,
@@ -13,6 +15,9 @@ from pygame.locals import (
     KMOD_ALT
 )
 from common import *
+from opengl import menu_vao, menu_vbo, tex_vao, tex_vbo
+from opengl import menu_shader_program, tex_shader_program
+
 font = pygame.font.Font(file_path('menu_font.ttf'), 30)
 
 
@@ -24,6 +29,9 @@ class Action(Enum):
     DOWN = 5
     DELETE = 6
     UNICODE = 7
+
+
+image_texture = glGenTextures(1)
 
 
 class Menu:
@@ -71,6 +79,9 @@ class Menu:
                 actions.append(Action.ENTER)
             elif event.type == pygame.QUIT:
                 actions.append(Action.QUIT)
+            elif event.type == pygame.VIDEORESIZE:
+                settings.update_screen(event.w, event.h)
+                glViewport(0, 0, settings.current_w, settings.current_h)
             elif keydown and not pygame.key.get_mods() & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT):
                 actions.append(Action.UNICODE)
                 self.unicode.append(event.unicode)
@@ -114,21 +125,26 @@ def menu(player: dict[str, int]):
             if event == Action.UP:
                 position = max(position - 1, 0)
 
-        screen.fill((0, 0, 0))
+        menu_clear()
 
         for i in range(n):
             text = ('→ ' + options[i] + ' ←', options[i])[i != position]
             text_surf = font.render(text, False, (255, 255, 255))
-            x = (settings.current_w - text_surf.get_width()) / 2
-            y = (settings.current_h - text_surf.get_height()) / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
-            screen.blit(text_surf, (x, y))
+            w = text_surf.get_width() / settings.current_w * 2
+            x = - w / 2
+            h = text_surf.get_height() / settings.current_h * 2
+            y = h + (20 + text_surf.get_height()) * (n / 2 - i) / settings.current_h * 2
+
+            blit(x, y, w, h, text_surf)
 
         if player['score'] > 0:
             text = 'New best for ' + str(player['name']) + ' : ' if player['new_best'] else ''
             text_surf = font.render(text + str(round(player['score'], 2)), False, (255, 255, 255))
-            x = (settings.current_w - text_surf.get_width()) / 2
-            y = settings.current_h / 10
-            screen.blit(text_surf, (x, y))
+            w = text_surf.get_width() / settings.current_w * 2
+            x = - w / 2
+            h = text_surf.get_height() / settings.current_h * 2
+            y = 0.7
+            blit(x, y, w, h, text_surf)
 
         pygame.display.flip()
 
@@ -160,17 +176,18 @@ def menu_name(name: str):
                 if position == options.index('Name'):
                     name += m.get_unicode().upper()
 
-        screen.fill((0, 0, 0))
+        menu_clear()
 
         for i in range(n):
             text = ('→ ' + options[i] + ' : ', '  ' + options[i] + ' : ')[i != position]
             if i == options.index('Name'):
                 text += name
             text_surf = font.render(text, False, (255, 255, 255))
-            w = settings.current_w / 2
-            h = settings.current_h / 2 - (20 + text_surf.get_height()) * (n / 2 - i)
-            screen.blit(text_surf, (w - 100,
-                                    h - text_surf.get_height() / 2))
+            w = text_surf.get_width() / settings.current_w * 2
+            x = -0.3
+            h = text_surf.get_height() / settings.current_h * 2
+            y = h + (20 + text_surf.get_height()) * (n / 2 - i) / settings.current_h * 2
+            blit(x, y, w, h, text_surf)
         pygame.display.flip()
 
         clock.tick(30)
@@ -194,14 +211,53 @@ def menu_credits():
         if t == 0:
             i += 1
             i %= len(credit) + 2
-            screen.fill((0, 0, 0))
+            menu_clear()
             if i < len(credit):
                 text_surf = font.render(credit[i], False, (255, 255, 255))
-                w = (settings.current_w - text_surf.get_width()) / 2
-                h = (settings.current_h - text_surf.get_height()) / 2
-                screen.blit(text_surf, (w, h))
+                w = text_surf.get_width() / settings.current_w * 2
+                h = text_surf.get_height() / settings.current_h * 2
+                x = - w / 2
+                y = h
+                blit(x, y, w, h, text_surf)
+
             pygame.display.flip()
 
         t += clock.tick(30)
         if t >= 2000:
             t = 0
+
+
+def blit(x, y, w, h, surf):
+    glBindBuffer(GL_ARRAY_BUFFER, tex_vbo)
+    vertex_data = np.array([
+        x, y, 0, 0,
+        x + w, y, 1, 0,
+        x + w, y + h, 1, 1,
+        x, y + h, 0, 1
+    ], np.float32)
+    glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+    glBindTexture(GL_TEXTURE_2D, image_texture)
+    image_data = pygame.image.tostring(surf, "RGBA", True)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.get_width(), surf.get_height(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, image_data)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glUseProgram(tex_shader_program)
+    glEnable(GL_TEXTURE_2D)
+    glBindVertexArray(tex_vao)
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+    glBindVertexArray(0)
+    glInvalidateBufferData(tex_vbo)
+    glBindTexture(GL_TEXTURE_2D, 0)
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+
+def menu_clear():
+    glDisable(GL_TEXTURE_2D)
+    glDisable(GL_BLEND)
+    glUseProgram(menu_shader_program)
+    glBindBuffer(GL_ARRAY_BUFFER, menu_vbo)
+    glBindVertexArray(menu_vao)
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+    glBindVertexArray(0)
+    glBindBuffer(GL_ARRAY_BUFFER, 0)

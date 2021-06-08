@@ -11,7 +11,7 @@ from pygame.locals import (
 import ressources
 from common import *
 from OpenGL.GL import *
-from opengl import vao, vbo
+from opengl import tex_vao, tex_vbo
 
 
 class Player(pygame.sprite.Sprite):
@@ -74,8 +74,7 @@ class Player(pygame.sprite.Sprite):
         self.render()
 
     def render(self):
-        glBindVertexArray(vao)
-        glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        glBindBuffer(GL_ARRAY_BUFFER, tex_vbo)
         vertex_data = np.array([
             self.pos.x, self.pos.y, 0, 0,
             self.pos.x + self.w / settings.current_w, self.pos.y, 1, 0,
@@ -84,9 +83,8 @@ class Player(pygame.sprite.Sprite):
         ], np.float32)
         glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
-        glBindVertexArray(vao)
+        glBindVertexArray(tex_vao)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-        glInvalidateBufferData(vbo)
-        glBindVertexArray(0)
+        glInvalidateBufferData(tex_vbo)
         glBindTexture(GL_TEXTURE_2D, 0)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
