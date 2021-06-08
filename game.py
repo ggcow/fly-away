@@ -84,11 +84,11 @@ def game():
 
         pygame.display.flip()
 
-        # for b in birds:
-        #     if pygame.sprite.collide_rect(plane, b):
-        #         if pygame.sprite.collide_mask(plane, b):
-        #             running = False
-        #             pygame.time.wait(1000)
+        for b in birds:
+            if pygame.sprite.collide_rect(plane, b):
+                if pygame.sprite.collide_mask(plane, b):
+                    running = False
+                    pygame.time.wait(1000)
 
         # t = time.monotonic_ns()
         # delta = (t - last_time) / 1_000_000

@@ -42,9 +42,8 @@ class Player(pygame.sprite.Sprite):
 
     def resize(self):
         self.w, self.h = 2 * settings.current_w / 15, 2 * settings.current_h / 15
-        surf = pygame.transform.scale(self.image, (int(self.w), int(self.h / 15)))
-        self.rect.w = surf.get_width()
-        self.rect.h = surf.get_height()
+        self.rect.w, self.rect.h = self.w / 2, self.h / 2
+        surf = pygame.transform.scale(self.image, (self.rect.w, self.rect.h))
         self.mask = pygame.mask.from_surface(surf)
 
     def update(self, delta, keys: collections.abc.Sequence[bool], joy_value: pygame.Vector2):
@@ -69,8 +68,9 @@ class Player(pygame.sprite.Sprite):
         self.pos.x = min(max(self.pos.x, -1), 1 - self.w / settings.current_w)
         self.pos.y = min(max(self.pos.y, -1), 1 - self.h / settings.current_h)
 
-        self.rect.x = int(self.pos.x * settings.current_w)
-        self.rect.y = int(self.pos.y * settings.current_h)
+        self.rect.x = int((self.pos.x + 1) / 2 * settings.current_w)
+        self.rect.y = int((1 - self.pos.y) / 2 * settings.current_h) - self.rect.h
+
         self.render()
 
     def render(self):

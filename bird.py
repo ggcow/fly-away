@@ -43,18 +43,17 @@ class Bird(pygame.sprite.Sprite):
 
     @staticmethod
     def static_resize():
-        Bird.w, Bird.h = 2 * settings.current_w / 18, 2 * settings.current_h / 18
-        image_grid = pygame.transform.scale(Bird.image_source, (int(Bird.w * Bird.sprites), int(Bird.h)))
+        Bird.w, Bird.h = 2 * settings.current_w / 18, 2 * settings.current_h / 14
+        image_grid = pygame.transform.scale(Bird.image_source, (int(Bird.w / 2 * Bird.sprites), int(Bird.h / 2)))
         Bird.masks.clear()
         for i in range(Bird.sprites):
-            surf = pygame.Surface((Bird.w, image_grid.get_height()))
+            surf = pygame.Surface((Bird.w / 2, image_grid.get_height()))
             surf.set_colorkey((0, 0, 0))
-            surf.blit(image_grid, (0, 0), pygame.Rect(i * Bird.w, 0, Bird.w, Bird.h))
+            surf.blit(image_grid, (0, 0), pygame.Rect(i * Bird.w / 2, 0, Bird.w / 2, Bird.h / 2))
             Bird.masks.append(pygame.mask.from_surface(surf.convert_alpha()))
 
     def resize(self):
-        self.rect.w = int(Bird.w)
-        self.rect.h = int(Bird.h)
+        self.rect.w, self.rect.h = self.w / 2, self.h / 2
 
     def update(self, delta):
         self.pos.x += self.vel.x * delta / 1000 * self.speed
@@ -69,8 +68,8 @@ class Bird(pygame.sprite.Sprite):
         self.index = math.floor(self.time / 1000 * Bird.sprites)
         self.mask = Bird.masks[self.index]
 
-        self.rect.x = int(self.pos.x * settings.current_w)
-        self.rect.y = int(self.pos.y * settings.current_h)
+        self.rect.x = int((self.pos.x + 1) / 2 * settings.current_w)
+        self.rect.y = int((1 - self.pos.y) / 2 * settings.current_h) - self.rect.h
 
         self.render()
 
