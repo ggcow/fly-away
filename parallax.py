@@ -8,8 +8,8 @@ from opengl import tex_vao, tex_vbo
 
 
 class Layer(pygame.sprite.Sprite):
-    def __init__(self, group: pygame.sprite.Group, image: pygame.Surface, speed):
-        super(Layer, self).__init__(group)
+    def __init__(self, image: pygame.Surface, speed):
+        super().__init__()
         self.w = image.get_width()
         self.h = image.get_height()
         self.speed = speed / 2
@@ -47,15 +47,23 @@ class Layer(pygame.sprite.Sprite):
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 
-
-class Parallax(pygame.sprite.Group):
+class Parallax:
     def __init__(self):
         super().__init__()
         self.w = settings.current_w
+        self.layers: list[Layer] = []
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i])
-            layer = Layer(self, image, i / 8)
+            layer = Layer(image, i / 8)
             layer._layer = i - 20
             layer.scrolling = 0
+            self.layers.append(layer)
 
+    def update(self, delta, *indexes):
+        if len(indexes) == 0:
+            for layer in self.layers:
+                layer.update(delta)
+        else:
+            for index in indexes:
+                self.layers[index].update(delta)

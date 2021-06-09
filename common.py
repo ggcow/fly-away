@@ -9,11 +9,13 @@ pygame.display.init()
 screen_info = pygame.display.Info()
 
 MUSIC_VOLUME = 0.1
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 
 
 class Settings:
     def __init__(self):
-        self.flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.OPENGL
+        self.flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.OPENGL | pygame.NOFRAME
         self.fullscreen = False
         self.muted = False
         self.initial_width = int(screen_info.current_w / 2)

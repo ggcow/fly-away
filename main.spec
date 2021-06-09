@@ -3,12 +3,10 @@
 
 block_cipher = None
 
-added_files = [('assets', 'assets')]
-
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\Roch-Ledan\\Documents\\pygame-master'],
+             pathex=['/home/ggned/PycharmProjects/game'],
              binaries=[],
-             datas=added_files,
+             datas=[('assets', 'assets')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -32,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False )
+          console=True )

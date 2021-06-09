@@ -30,7 +30,7 @@ def game():
     time_count = 0
     frame_count = 0
 
-    background_parallax = parallax.Parallax()
+    background = parallax.Parallax()
     plane = player.Player()
     running = True
     joy_value = pygame.Vector2(0, 0)
@@ -78,17 +78,22 @@ def game():
 
         keys = pygame.key.get_pressed()
 
-        background_parallax.update(delta)
+        background.update(delta, 0, 1, 2, 4, 5)
         plane.update(delta, keys, joy_value)
         birds.update(delta)
+        background.update(delta, 3, 6)
 
         pygame.display.flip()
 
         for b in birds:
             if pygame.sprite.collide_rect(plane, b):
                 if pygame.sprite.collide_mask(plane, b):
-                    running = False
-                    pygame.time.wait(1000)
+                    plane.hp -= 1
+                    if plane.hp <= 0:
+                        running = False
+                        pygame.time.wait(1000)
+                    else:
+                        birds.remove(b)
 
         # t = time.monotonic_ns()
         # delta = (t - last_time) / 1_000_000
