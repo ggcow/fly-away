@@ -4,7 +4,7 @@ import numpy as np
 
 from common import *
 from OpenGL.GL import *
-from opengl import tex_vao, tex_vbo
+from opengl import vao, vbo
 
 
 class Layer(pygame.sprite.Sprite):
@@ -31,7 +31,6 @@ class Layer(pygame.sprite.Sprite):
         self.render()
 
     def render(self):
-        glBindBuffer(GL_ARRAY_BUFFER, tex_vbo)
         portion = settings.current_w * self.h / settings.current_h / self.w
         vertex_data = np.array([
             -1, -1, self.scrolling, 0,
@@ -42,9 +41,8 @@ class Layer(pygame.sprite.Sprite):
         glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-        glInvalidateBufferData(tex_vbo)
+        glInvalidateBufferData(vbo)
         glBindTexture(GL_TEXTURE_2D, 0)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 
 class Parallax:

@@ -11,18 +11,14 @@ import bird
 import player
 from common import *
 from OpenGL.GL import *
-from opengl import tex_shader_program as shader_program
-from opengl import tex_vao as tex_vao
+from opengl import shader_program as shader_program
+from opengl import vao as vao
 
 
 music_names = sorted(glob.glob(file_path('music/**')))
 
 
 def game():
-    glUseProgram(shader_program)
-    glEnable(GL_TEXTURE_2D)
-    glEnable(GL_BLEND)
-    glBindVertexArray(tex_vao)
     pygame.key.set_repeat()
     last_time = time.monotonic_ns()
     start_time = last_time
