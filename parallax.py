@@ -1,7 +1,4 @@
 import glob
-
-import numpy as np
-
 from common import *
 from OpenGL.GL import *
 from opengl import vao, vbo
@@ -32,12 +29,12 @@ class Layer(pygame.sprite.Sprite):
 
     def render(self):
         portion = settings.current_w * self.h / settings.current_h / self.w
-        vertex_data = np.array([
+        vertex_data = (ctypes.c_float * 16)(
             -1, -1, self.scrolling, 0,
             1, -1, self.scrolling + portion, 0,
             1, 1, self.scrolling + portion, 1,
             -1, 1, self.scrolling, 1
-        ], np.float32)
+        )
         glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)

@@ -235,12 +235,12 @@ def blit(x, y, w, h, surf):
 
 
 def menu_clear():
-    vertex_data = np.array([
+    vertex_data = (ctypes.c_float * 16)(
         -1, -1, 0, 0,
         1, -1, 0, 0,
         1, 1, 0, 0,
         -1, 1, 0, 0
-    ], np.float32)
+    )
     glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
     glInvalidateBufferData(vbo)

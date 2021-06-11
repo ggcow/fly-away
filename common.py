@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 from enum import Enum
 import pygame
 import opengl
@@ -61,17 +62,21 @@ settings = Settings()
 screen = pygame.display.set_mode((settings.initial_width, settings.initial_height), settings.flags, vsync=1)
 opengl.init()
 
-base_path = ''
-if getattr(sys, 'frozen', False):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        print('exc')
-        base_path = os.path.abspath(".")
+try:
+    """
+    :type sys: sys
+    :rtype sys:
+    """
+    base_path = sys._MEIPASS
+except AttributeError:
+    base_path = os.path.abspath(".")
 
 
-def file_path(relative_path):
-    return os.path.join(base_path, 'assets/' + relative_path)
+def file_path(path):
+    relative_path = 'assets/' + path
+    if os.path.exists(relative_path):
+        return relative_path
+    return os.path.join(base_path, relative_path)
 
 
 def common_event(event: pygame.event.Event):

@@ -1,19 +1,14 @@
 import random
 import time
 import parallax
-
 from pygame.locals import (
     K_ESCAPE,
 )
 from setuptools import glob
-
 import bird
 import player
 from common import *
 from OpenGL.GL import *
-from opengl import shader_program as shader_program
-from opengl import vao as vao
-
 
 music_names = sorted(glob.glob(file_path('music/**')))
 

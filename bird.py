@@ -1,8 +1,5 @@
 import math
 import random
-
-import numpy as np
-
 from common import *
 import ressources
 from OpenGL.GL import *
@@ -74,7 +71,7 @@ class Bird(pygame.sprite.Sprite):
         self.render()
 
     def render(self):
-        vertex_data = np.array([
+        vertex_data = (ctypes.c_float * 16)(
             self.pos.x, self.pos.y,
             self.index / Bird.sprites, 0,
 
@@ -86,7 +83,7 @@ class Bird(pygame.sprite.Sprite):
 
             self.pos.x, self.pos.y + Bird.h / settings.current_h,
             self.index / Bird.sprites, 1
-        ], np.float32)
+        )
         glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
         glBindTexture(GL_TEXTURE_2D, Bird.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
