@@ -1,6 +1,5 @@
 import os
 import sys
-import traceback
 from enum import Enum
 import pygame
 import opengl

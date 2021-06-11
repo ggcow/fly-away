@@ -1,4 +1,3 @@
-import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 from ctypes import sizeof, c_float, c_void_p

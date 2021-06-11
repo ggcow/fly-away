@@ -1,6 +1,5 @@
 import time
 
-import numpy as np
 import pygame.time
 from OpenGL.GL import *
 from pygame.locals import (
@@ -216,12 +215,12 @@ class Menu:
 
 
 def blit(x, y, w, h, surf):
-    vertex_data = np.array([
+    vertex_data = (ctypes.c_float * 16)(
         x, y, 0, 0,
         x + w, y, 1, 0,
         x + w, y + h, 1, 1,
         x, y + h, 0, 1
-    ], np.float32)
+    )
     glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
     glBindTexture(GL_TEXTURE_2D, image_texture)
     image_data = pygame.image.tostring(surf, "RGBA", True)
