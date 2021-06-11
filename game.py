@@ -1,5 +1,8 @@
 import random
 import time
+
+import pygame.mixer
+
 import parallax
 from pygame.locals import (
     K_ESCAPE,
@@ -13,13 +16,16 @@ from OpenGL.GL import *
 music_names = sorted(glob.glob(file_path('music/**')))
 
 
-def game():
+def game(best: int):
     pygame.key.set_repeat()
     last_time = time.monotonic_ns()
     start_time = last_time
     delta = 0.
     time_count = 0
     frame_count = 0
+
+    new_best_sound = pygame.mixer.Sound(file_path('win.wav'))
+    best_sound_played = False
 
     background = parallax.Parallax()
     plane = player.Player()
@@ -100,4 +106,9 @@ def game():
             time_count = 0
             print("FPS : " + str(frame_count))
             frame_count = 0
+
+        if not best_sound_played and (last_time - start_time) / 1_000_000_000 > best:
+            new_best_sound.play()
+            best_sound_played = True
+
     return (last_time - start_time) / 1_000_000_000

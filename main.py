@@ -27,7 +27,11 @@ def main():
     while True:
         player_name = m.main({'name': player_name, 'score': player_score, 'new_best': new_best})
         if player_name != Command.EXIT:
-            player_score = game.game()
+            try:
+                best_score = list(scores.values())[0]
+            except IndexError:
+                best_score = 0
+            player_score = game.game(best_score)
         else:
             break
 
@@ -35,6 +39,7 @@ def main():
         if player_score > scores.get(player_name, 0):
             new_best = True
             scores[player_name] = player_score
+            scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
             with open('scores.txt', 'w') as f:
                 f.write(scores.__str__())
         else:
