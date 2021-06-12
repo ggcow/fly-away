@@ -25,7 +25,7 @@ def main():
     m = menu.Menu()
 
     while True:
-        player_name = m.main({'name': player_name, 'score': player_score, 'new_best': new_best})
+        player_name = m.main({'player_name': player_name, 'player_score': player_score, 'scores': scores})
         if player_name != Command.EXIT:
             try:
                 best_score = list(scores.values())[0]
@@ -37,7 +37,6 @@ def main():
 
         print(str(player_name) + " : " + str(player_score))
         if player_score > scores.get(player_name, 0):
-            new_best = True
             scores[player_name] = player_score
             scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
             with open('scores.txt', 'w') as f:

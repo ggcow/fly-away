@@ -83,13 +83,13 @@ class Menu:
                 last_joy_value = abs(event.value) + 0.1
         return actions
 
-    def main(self, player: dict[str, int]):
+    def main(self, info: dict):
         pygame.key.set_repeat(500, 70)
-        player_name = player['name']
+        player_name = info['player_name']
         pygame.font.init()
         position = 0
         clock = pygame.time.Clock()
-        options = ('Start', 'Credits', 'Exit')
+        options = ('Start', 'High scores', 'Credits', 'Exit')
         pygame.mixer.music.load(file_path('menu.mp3'))
         pygame.mixer.music.set_volume(MUSIC_VOLUME / 2)
         pygame.mixer.music.play(-1, fade_ms=100)
@@ -103,6 +103,9 @@ class Menu:
                         player_name = self.name(player_name if not isinstance(player_name, Command) else '')
                         if player_name != Command.BACK:
                             return player_name
+                    elif position == options.index('High scores'):
+                        if self.high_scores(info['scores']) == Command.EXIT:
+                            return Command.EXIT
                     elif position == options.index('Credits'):
                         if self.credits() == Command.EXIT:
                             return Command.EXIT
@@ -128,13 +131,40 @@ class Menu:
 
                 blit(x, y, w, h, text_surf)
 
-            if player['score'] > 0:
-                text = 'New best for ' + str(player['name']) + ' : ' if player['new_best'] else ''
-                text_surf = font.render(text + str(round(player['score'], 2)), False, (255, 255, 255))
+            if info['player_score'] > 0:
+                text = 'New best for ' + \
+                       info['player_name'] + \
+                       ' : ' if info['player_score'] == info['scores'][info['player_name']] else ''
+                text_surf = font.render(text + str(round(info['player_score'], 2)), False, (255, 255, 255))
                 w = text_surf.get_width() / settings.current_w * 2
                 x = - w / 2
                 h = text_surf.get_height() / settings.current_h * 2
                 y = 0.7
+                blit(x, y, w, h, text_surf)
+
+            pygame.display.flip()
+
+            clock.tick(30)
+
+    def high_scores(self, scores: dict[str, int]):
+        clock = pygame.time.Clock()
+        n = len(scores)
+        while True:
+            for event in self.poll_events():
+                if event == Menu.Action.QUIT:
+                    return Command.EXIT
+                if event == Menu.Action.BACK:
+                    return Command.BACK
+
+            menu_clear()
+
+            for i in range(n):
+                text = list(scores.keys())[i] + ' : %.2f' % list(scores.values())[i]
+                text_surf = font.render(text, False, (255, 255, 255))
+                w = text_surf.get_width() / settings.current_w * 2
+                x = - w / 2
+                h = text_surf.get_height() / settings.current_h * 2
+                y = h + (20 + text_surf.get_height()) * (n / 2 - i) / settings.current_h * 2
                 blit(x, y, w, h, text_surf)
 
             pygame.display.flip()
