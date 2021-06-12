@@ -1,4 +1,6 @@
 import collections.abc
+from ctypes import c_float
+
 import pygame.image
 from pygame.locals import (
     K_UP,
@@ -75,12 +77,13 @@ class Player(pygame.sprite.Sprite):
 
     def render(self):
         vertex_data = (ctypes.c_float * 16)(
-            self.pos.x, self.pos.y, 0, 0,
-            self.pos.x + self.w / settings.current_w, self.pos.y, 1, 0,
-            self.pos.x + self.w / settings.current_w, self.pos.y + self.h / settings.current_h, 1, 1,
-            self.pos.x, self.pos.y + self.h / settings.current_h, 0, 1
+            self.pos.x, self.pos.y,
+            self.pos.x + self.w / settings.current_w, self.pos.y,
+            self.pos.x + self.w / settings.current_w, self.pos.y + self.h / settings.current_h,
+            self.pos.x, self.pos.y + self.h / settings.current_h,
+            0, 0, 1, 0, 1, 1, 0, 1
         )
-        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
         glInvalidateBufferData(vbo)

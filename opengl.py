@@ -2,7 +2,6 @@ from OpenGL.GL import *
 from OpenGL.GL import shaders
 from ctypes import sizeof, c_float, c_void_p
 
-
 vao, vbo = 0, 0
 shader_program = None
 
@@ -39,11 +38,17 @@ def init():
     vao = glGenVertexArrays(1)
     vbo = glGenBuffers(1)
 
+    vertex_data = (c_float * 16)(
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+    )
+
     glBindVertexArray(vao)
     glBindBuffer(GL_ARRAY_BUFFER, vbo)
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(c_float) * 4, c_void_p(0))
+    glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(c_float), vertex_data, GL_STREAM_DRAW)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, c_void_p(0))
     glEnableVertexAttribArray(0)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(c_float) * 4, c_void_p(2 * sizeof(c_float)))
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, c_void_p(8 * sizeof(c_float)))
     glEnableVertexAttribArray(1)
 
     glUseProgram(shader_program)

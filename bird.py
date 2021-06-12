@@ -1,5 +1,7 @@
 import math
 import random
+from ctypes import c_float
+
 from common import *
 import ressources
 from OpenGL.GL import *
@@ -73,18 +75,16 @@ class Bird(pygame.sprite.Sprite):
     def render(self):
         vertex_data = (ctypes.c_float * 16)(
             self.pos.x, self.pos.y,
-            self.index / Bird.sprites, 0,
-
             self.pos.x + Bird.w / settings.current_w, self.pos.y,
-            (self.index + 1) / Bird.sprites, 0,
-
             self.pos.x + Bird.w / settings.current_w, self.pos.y + Bird.h / settings.current_h,
-            (self.index + 1) / Bird.sprites, 1,
-
             self.pos.x, self.pos.y + Bird.h / settings.current_h,
+
+            self.index / Bird.sprites, 0,
+            (self.index + 1) / Bird.sprites, 0,
+            (self.index + 1) / Bird.sprites, 1,
             self.index / Bird.sprites, 1
         )
-        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
         glBindTexture(GL_TEXTURE_2D, Bird.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
         glInvalidateBufferData(vbo)

@@ -1,4 +1,5 @@
 import time
+from ctypes import c_float
 
 import pygame.time
 from OpenGL.GL import *
@@ -84,6 +85,7 @@ class Menu:
         return actions
 
     def main(self, info: dict):
+        glBindBuffer(GL_ARRAY_BUFFER, vbo)
         pygame.key.set_repeat(500, 70)
         player_name = info['player_name']
         pygame.font.init()
@@ -119,7 +121,7 @@ class Menu:
                 if event == Menu.Action.UP:
                     position = max(position - 1, 0)
 
-            menu_clear()
+            glClear(GL_COLOR_BUFFER_BIT)
 
             for i in range(n):
                 text = ('→ ' + options[i] + ' ←', options[i])[i != position]
@@ -156,7 +158,7 @@ class Menu:
                 if event == Menu.Action.BACK:
                     return Command.BACK
 
-            menu_clear()
+            glClear(GL_COLOR_BUFFER_BIT)
 
             for i in range(n):
                 text = list(scores.keys())[i] + ' : %.2f' % list(scores.values())[i]
@@ -195,7 +197,7 @@ class Menu:
                     if position == options.index('Name'):
                         player_name += self.unicode.pop().upper()
 
-            menu_clear()
+            glClear(GL_COLOR_BUFFER_BIT)
 
             for i in range(n):
                 text = ('→ ' + options[i] + ' : ', '  ' + options[i] + ' : ')[i != position]
@@ -228,7 +230,7 @@ class Menu:
             if t == 0:
                 i += 1
                 i %= len(credit) + 2
-                menu_clear()
+                glClear(GL_COLOR_BUFFER_BIT)
                 if i < len(credit):
                     text_surf = font.render(credit[i], False, (255, 255, 255))
                     w = text_surf.get_width() / settings.current_w * 2
@@ -246,12 +248,10 @@ class Menu:
 
 def blit(x, y, w, h, surf):
     vertex_data = (ctypes.c_float * 16)(
-        x, y, 0, 0,
-        x + w, y, 1, 0,
-        x + w, y + h, 1, 1,
-        x, y + h, 0, 1
+        x, y, x + w, y, x + w, y + h, x, y + h,
+        0, 0, 1, 0, 1, 1, 0, 1
     )
-    glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
     glBindTexture(GL_TEXTURE_2D, image_texture)
     image_data = pygame.image.tostring(surf, "RGBA", True)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.get_width(), surf.get_height(), 0, GL_RGBA,
@@ -261,15 +261,3 @@ def blit(x, y, w, h, surf):
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
     glInvalidateBufferData(vbo)
     glBindTexture(GL_TEXTURE_2D, 0)
-
-
-def menu_clear():
-    vertex_data = (ctypes.c_float * 16)(
-        -1, -1, 0, 0,
-        1, -1, 0, 0,
-        1, 1, 0, 0,
-        -1, 1, 0, 0
-    )
-    glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-    glInvalidateBufferData(vbo)

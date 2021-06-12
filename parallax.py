@@ -1,7 +1,9 @@
 import glob
-from common import *
+from ctypes import c_float
+import pygame
+from common import settings, file_path
+from opengl import vbo
 from OpenGL.GL import *
-from opengl import vao, vbo
 
 
 class Layer(pygame.sprite.Sprite):
@@ -29,16 +31,16 @@ class Layer(pygame.sprite.Sprite):
 
     def render(self):
         portion = settings.current_w * self.h / settings.current_h / self.w
-        vertex_data = (ctypes.c_float * 16)(
-            -1, -1, self.scrolling, 0,
-            1, -1, self.scrolling + portion, 0,
-            1, 1, self.scrolling + portion, 1,
-            -1, 1, self.scrolling, 1
+        vertex_data = (c_float * 16) (
+            -1, -1, 1, -1, 1, 1, -1, 1,
+            self.scrolling, 0,
+            self.scrolling + portion, 0,
+            self.scrolling + portion, 1,
+            self.scrolling, 1
         )
-        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_DYNAMIC_DRAW)
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-        glInvalidateBufferData(vbo)
         glBindTexture(GL_TEXTURE_2D, 0)
 
 
@@ -50,7 +52,7 @@ class Parallax:
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
             image = pygame.image.load(file_names[i])
-            layer = Layer(image, i / 8)
+            layer = Layer(image.convert_alpha(), i / 8)
             layer._layer = i - 20
             layer.scrolling = 0
             self.layers.append(layer)

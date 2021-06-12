@@ -10,7 +10,7 @@ from pygame.locals import (
 from setuptools import glob
 import bird
 import player
-from common import *
+from common import file_path, settings, common_event, MUSIC_VOLUME
 from OpenGL.GL import *
 
 music_names = sorted(glob.glob(file_path('music/**')))
@@ -95,7 +95,7 @@ def game(best: int):
         # t = time.monotonic_ns()
         # delta = (t - last_time) / 1_000_000
         # if delta < 50 / 3:
-        #     pygame.time.wait(int(50 / 3 - delta))
+        #     pygame.time.delay(int(50 / 3 - delta))
 
         t = time.monotonic_ns()
         delta = (t - last_time) / 1_000_000
