@@ -25,22 +25,12 @@ class Player(pygame.sprite.Sprite):
         self.hp = 3
         self.acc = self.speed * 2
         self.vel = pygame.Vector2(0, 0)
-        self.image = ressources.player
+        self.image = ressources.player()
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.mask = None
         self.w, self.h = 0, 0
-        self.image_texture = glGenTextures(1)
+        self.image, self.texture = ressources.player()
         self.resize()
-        glBindTexture(GL_TEXTURE_2D, self.image_texture)
-        image_data = pygame.image.tostring(self.image, "RGBA", True)
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGBA,
-            self.image.get_width(),
-            self.image.get_height(),
-            0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glBindTexture(GL_TEXTURE_2D, 0)
 
     def resize(self):
         self.w, self.h = 2 * settings.current_w / 15, 2 * settings.current_h / 15
@@ -84,7 +74,7 @@ class Player(pygame.sprite.Sprite):
             0, 0, 1, 0, 1, 1, 0, 1
         )
         glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
-        glBindTexture(GL_TEXTURE_2D, self.image_texture)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
         glInvalidateBufferData(vbo)
         glBindTexture(GL_TEXTURE_2D, 0)

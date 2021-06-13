@@ -33,7 +33,6 @@ def game(best: int):
     joy_value = pygame.Vector2(0, 0)
 
     birds = pygame.sprite.Group()
-    bird.Bird.static_resize()
 
     event_add_bird = pygame.event.custom_type()
     event_more_birds = pygame.event.custom_type()
@@ -62,7 +61,6 @@ def game(best: int):
                 settings.update_screen(event.w, event.h)
                 glViewport(0, 0, settings.current_w, settings.current_h)
                 plane.resize()
-                bird.Bird.static_resize()
                 b: bird.Bird
                 for b in birds:
                     b.resize()
