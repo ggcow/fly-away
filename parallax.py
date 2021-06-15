@@ -1,5 +1,4 @@
 import glob
-from ctypes import c_float, c_void_p
 from common import *
 from OpenGL.GL import *
 

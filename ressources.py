@@ -7,6 +7,7 @@ def load(entity: list, path: str):
     file_names = glob.glob(file_path(path))
     for i in range(len(file_names)):
         image = IMG_Load(file_names[i])
+        image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0)
         texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texture)
         surf = image.contents
@@ -17,7 +18,7 @@ def load(entity: list, path: str):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
         glBindTexture(GL_TEXTURE_2D, 0)
-        entity.append((image, texture))
+        entity.append((surf, texture))
 
 
 birds = []

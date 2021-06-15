@@ -1,6 +1,4 @@
 import ast
-import sys
-
 import menu
 import game
 from common import *

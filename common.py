@@ -7,7 +7,7 @@ from sdl2.sdlttf import *
 from sdl2.sdlmixer import *
 from sdl2 import *
 from OpenGL.GL import *
-from ctypes import c_void_p, byref, memset, sizeof
+from ctypes import *
 from math_objects import *
 
 

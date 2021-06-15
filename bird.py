@@ -8,7 +8,7 @@ class Bird(Sprite):
     sprites = 6
 
     def __init__(self, *args):
-        super().__init__(ressources.bird()[1], *args)
+        super().__init__(ressources.bird(), *args)
 
     def update(self, delta):
         super().update(delta)

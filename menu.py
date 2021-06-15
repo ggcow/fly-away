@@ -1,6 +1,5 @@
 import time
 from common import *
-from opengl import vbo
 
 font = TTF_OpenFont(file_path('menu_font.ttf'), 30)
 
@@ -76,7 +75,6 @@ class Menu:
         return actions
 
     def main(self, info: dict):
-        glBindBuffer(GL_ARRAY_BUFFER, vbo)
         player_name = info['player_name']
         position = 0
         options = ('Start', 'High scores', 'Credits', 'Exit')

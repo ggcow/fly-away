@@ -1,9 +1,6 @@
-import ctypes
 import random
 import time
-
-import sdl2.dll
-
+import pygame
 import parallax
 from setuptools import glob
 import bird
@@ -13,20 +10,6 @@ from OpenGL.GL import *
 from timer import Timer
 
 music_names = sorted(glob.glob(file_path('music/**')))
-EVENT_ADD_BIRD = SDL_RegisterEvents(1)
-event_add_bird = SDL_Event()
-event_add_bird.user.type = EVENT_ADD_BIRD
-event_add_bird.user.code = 0
-event_add_bird.user.data1 = 0
-event_add_bird.user.data2 = 0
-
-
-
-def push_event(x: c_int, event):
-    print('LMFAO')
-    print(ctypes.cast(event, ctypes.POINTER(SDL_Event)).contents.user.data1)
-    SDL_PushEvent(ctypes.cast(event, ctypes.POINTER(SDL_Event)).contents)
-    return c_int(1)
 
 
 def game(best: int):
@@ -45,11 +28,9 @@ def game(best: int):
     joy_value = Vec2(0, 0)
 
     birds = []
-    event_add_bird_delay = 1000
-    event_add_bird_timer = Timer(byref(event_add_bird), event_add_bird_delay)
 
-    # pygame.time.set_timer(event_add_bird, event_add_bird_timer)
-    # pygame.time.set_timer(event_more_birds, 10000)
+    add_bird_timer = Timer(1000)
+    more_bird_timer = Timer(10000)
 
     music = Mix_LoadWAV(file_path(str(random.choice(music_names))))
     Mix_HaltChannel(-1)
@@ -58,6 +39,12 @@ def game(best: int):
     event = SDL_Event()
 
     while running:
+
+        for i in range(add_bird_timer.update()):
+            birds.append(bird.Bird(random.random() * 2 - 1, 0.01))
+        for i in range(more_bird_timer.update()):
+            add_bird_timer.delay *= 0.8
+
         while SDL_PollEvent(byref(event)) > 0:
             common_event(event)
 
@@ -76,13 +63,9 @@ def game(best: int):
                     settings.update_screen(event.window.data1, event.window.data2)
                     player.Player.resize(1 / 15, 1 / 15)
                     bird.Bird.resize(1 / 18, 1 / 14)
-
-            elif event.type == EVENT_ADD_BIRD:
-                print('new bird')
-                birds.append(bird.Bird(random.random() * 2 - 1, 0.01))
-            # elif event.type == event_more_birds:
-            #     event_add_bird_timer *= 0.8
-            #     pygame.time.set_timer(event_add_bird, int(event_add_bird_timer))
+                    plane.resize_masks()
+                    for b in birds:
+                        b.resize_masks()
 
         keys = SDL_GetKeyboardState(ctypes.c_int(0))
         background.update(delta, 0, 1, 2, 4, 5)
@@ -90,24 +73,21 @@ def game(best: int):
         plane.render()
         for b in birds:
             if b.update(delta):
-                print('bye bird')
                 birds.remove(b)
             b.render()
         background.update(delta, 3, 6)
 
         SDL_GL_SwapWindow(window)
 
-        # for b in birds:
-        #     if pygame.sprite.collide_rect(plane, b):
-        #         if pygame.sprite.collide_mask(plane, b):
-        #             plane.hp -= 1
-        #             if plane.hp <= 0:
-        #                 running = False
-        #                 pygame.time.wait(1000)
-        #             else:
-        #                 birds.remove(b)
-
-        event_add_bird_timer.update()
+        for b in birds:
+            if pygame.sprite.collide_rect(plane, b):
+                if pygame.sprite.collide_mask(plane, b):
+                    plane.hp -= 1
+                    if plane.hp <= 0:
+                        running = False
+                        pygame.time.wait(1000)
+                    else:
+                        birds.remove(b)
 
         if not best_sound_played and time.time() - start_time > best:
             Mix_PlayChannel(-1, new_best_sound, 0)

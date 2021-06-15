@@ -9,7 +9,8 @@ class Player(Sprite):
     image_source = ressources.player()[0]
 
     def __init__(self):
-        super().__init__(ressources.player()[1], 0.5, 1 / 100)
+        super().__init__(ressources.player(), 0.5, 1 / 100)
+        self.hp = 3
         self.max_speed = 100
 
     def update(self, delta: float, keys: [POINTER(c_int)], joy_value: Vec2):
