@@ -1,64 +1,74 @@
 import os
 import sys
 from enum import Enum
-import pygame
 import opengl
+from sdl2.sdlimage import *
+from sdl2.sdlttf import *
+from sdl2.sdlmixer import *
+from sdl2 import *
+from OpenGL.GL import *
+from ctypes import c_void_p, byref, memset, sizeof
+from math_objects import *
 
-pygame.init()
-pygame.display.init()
-screen_info = pygame.display.Info()
 
-MUSIC_VOLUME = 0.1
+SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
+IMG_Init(IMG_INIT_PNG)
+Mix_Init(MIX_INIT_MP3)
+TTF_Init()
+
+Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)
+
+screen_info = SDL_DisplayMode()
+SDL_GetCurrentDisplayMode(0, screen_info)
+
+MUSIC_VOLUME = 10
+Mix_Volume(-1, MUSIC_VOLUME)
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 
 
 class Settings:
     def __init__(self):
-        self.flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.OPENGL | pygame.NOFRAME
+        self.flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
         self.fullscreen = False
         self.muted = False
-        self.initial_width = int(screen_info.current_w / 2)
-        self.initial_height = int(screen_info.current_h / 2)
-        self.screen_w = self.initial_width
-        self.screen_h = self.initial_height
-        self.volume = MUSIC_VOLUME
-        self.current_w = self.screen_w
-        self.current_h = self.screen_h
+        self.initial_width = int(screen_info.w / 2)
+        self.initial_height = int(screen_info.h / 2)
+        self.window_w = self.initial_width
+        self.window_h = self.initial_height
+        self.current_w = self.window_w
+        self.current_h = self.window_h
 
     def update_screen(self, w: int, h: int):
-        global screen
         self.current_w = w
         self.current_h = h
-        screen = pygame.display.set_mode((w, h), self.flags, vsync=1)
+        glViewport(0, 0, w, h)
 
     def toggle_fullscreen(self):
         if self.fullscreen:
-            pygame.display.init()
-            pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, {
-                'size': (self.screen_w, self.screen_h),
-                'w': self.screen_w, 'h': self.screen_h
-            }))
+            SDL_SetWindowSize(window, self.window_w, self.window_h)
         else:
-            self.screen_w = settings.current_w
-            self.screen_h = settings.current_h
-            pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, {
-                'size': (screen_info.current_w, screen_info.current_h),
-                'w': screen_info.current_w, 'h': screen_info.current_h
-            }))
+            self.window_w = settings.current_w
+            self.window_h = settings.current_h
+            SDL_SetWindowSize(window, screen_info.w, screen_info.h)
         self.fullscreen = not self.fullscreen
 
     def toggle_mute(self):
-        self.muted = not self.muted
         if self.muted:
-            self.volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(0)
+            Mix_Volume(-1, MUSIC_VOLUME)
         else:
-            pygame.mixer.music.set_volume(self.volume)
+            Mix_Volume(-1, 0)
+        self.muted = not self.muted
 
 
 settings = Settings()
-screen = pygame.display.set_mode((settings.initial_width, settings.initial_height), settings.flags, vsync=1)
+window = SDL_CreateWindow(b"Game",
+                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                          settings.initial_width, settings.initial_height, settings.flags)
+SDL_GL_SetSwapInterval(1)
+context = SDL_GL_CreateContext(window)
+SDL_GL_MakeCurrent(window, context)
+glViewport(0, 0, settings.initial_width, settings.initial_height)
 opengl.init()
 
 try:
@@ -74,15 +84,15 @@ except AttributeError:
 def file_path(path):
     relative_path = 'assets/' + path
     if os.path.exists(relative_path):
-        return relative_path
-    return os.path.join(base_path, relative_path)
+        return relative_path.encode()
+    return os.path.join(base_path, relative_path).encode()
 
 
-def common_event(event: pygame.event.Event):
-    if event.type == pygame.KEYDOWN and pygame.key.get_mods() & pygame.KMOD_CTRL:
-        if event.key == pygame.K_f:
+def common_event(event: SDL_Event):
+    if event.type == SDL_KEYDOWN and SDL_GetModState() & KMOD_CTRL:
+        if event.key.keysym.sym == SDLK_f:
             settings.toggle_fullscreen()
-        elif event.key == pygame.K_s:
+        elif event.key.keysym.sym == SDLK_s:
             settings.toggle_mute()
 
 

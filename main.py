@@ -1,4 +1,6 @@
 import ast
+import sys
+
 import menu
 import game
 from common import *
@@ -6,11 +8,6 @@ from common import *
 
 def main():
     player_name = ''
-    pygame.mixer.init()
-    pygame.joystick.init()
-    if pygame.joystick.get_count() > 0:
-        j = pygame.joystick.Joystick(0)
-        j.init()
 
     if not os.path.exists('scores.txt'):
         with open('scores.txt', 'w') as f:
@@ -21,7 +18,6 @@ def main():
             scores = ast.literal_eval(f.readline())
 
     player_score: int = 0
-    new_best = False
     m = menu.Menu()
 
     while True:
@@ -41,14 +37,13 @@ def main():
             scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
             with open('scores.txt', 'w') as f:
                 f.write(scores.__str__())
-        else:
-            new_best = 0
 
-    pygame.joystick.quit()
-    pygame.mixer.quit()
-    pygame.display.quit()
-    pygame.quit()
-    sys.exit(0)
+    SDL_GL_DeleteContext(context)
+    Mix_CloseAudio()
+    Mix_Quit()
+    TTF_Quit()
+    IMG_Quit()
+    SDL_Quit()
 
 
 if __name__ == '__main__':

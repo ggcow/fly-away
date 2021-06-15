@@ -1,22 +1,19 @@
 import glob
-from ctypes import c_float
-import pygame
-from common import settings, file_path
-from opengl import vbo
+from ctypes import c_float, c_void_p
+from common import *
 from OpenGL.GL import *
 
 
-class Layer(pygame.sprite.Sprite):
-    def __init__(self, image: pygame.Surface, speed):
+class Layer:
+    def __init__(self, surf: SDL_Surface, speed):
         super().__init__()
-        self.w = image.get_width()
-        self.h = image.get_height()
+        self.w = surf.w
+        self.h = surf.h
         self.speed = speed / 2
         self.scrolling = 0.
         self.image_texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.image_texture)
-        image_data = pygame.image.tostring(image, "RGBA", True)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w, self.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.w, surf.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, c_void_p(surf.pixels))
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glBindTexture(GL_TEXTURE_2D, 0)
@@ -31,7 +28,7 @@ class Layer(pygame.sprite.Sprite):
 
     def render(self):
         portion = settings.current_w * self.h / settings.current_h / self.w
-        vertex_data = (c_float * 16) (
+        vertex_data = (c_float * 16)(
             -1, -1, 1, -1, 1, 1, -1, 1,
             self.scrolling, 0,
             self.scrolling + portion, 0,
@@ -51,9 +48,9 @@ class Parallax:
         self.layers: list[Layer] = []
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
-            image = pygame.image.load(file_names[i])
-            layer = Layer(image.convert_alpha(), i / 8)
-            layer._layer = i - 20
+            image = IMG_Load(file_names[i])
+            layer = Layer(image.contents, i / 8)
+            SDL_FreeSurface(image)
             layer.scrolling = 0
             self.layers.append(layer)
 
