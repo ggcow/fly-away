@@ -8,7 +8,7 @@ class Player(Entity):
     friction = 0.7
 
     def __init__(self):
-        super().__init__(ressources.player(), 0.5, 1 / 100)
+        super().__init__(ressources.get('player'), 0.5, 1 / 100)
         self.hp = 3
         self.max_speed = 100
 
@@ -32,7 +32,8 @@ class Player(Entity):
         if self.vel.length() > self.max_speed:
             self.vel *= self.max_speed / self.vel.length()
 
-        super().update(delta)
-
         self.pos.x = min(max(self.pos.x, -1), 1 - self.anim.ratio.x * 2)
         self.pos.y = min(max(self.pos.y, -1), 1 - self.anim.ratio.y * 2)
+
+        super().update(delta)
+

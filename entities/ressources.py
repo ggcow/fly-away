@@ -4,32 +4,36 @@ from common import *
 from entities.animation import Animation
 from entities.texture import Texture
 
-all_list = []
+dictionary = {}
 
 
-def load(path, x, y, sprites):
+def load(path: str, x, y, sprites):
     file_names = glob.glob(file_path(path))
-    new_list = []
+    _, entry, action, _ = path.split('/')
+    new = False
+    if entry not in dictionary:
+        dictionary[entry] = []
+        new = True
     for i in range(len(file_names)):
         tex = Texture(file_names[i])
         anim = Animation(tex, sprites, Vec2(x, y))
-        new_list.append(anim)
-    all_list.append(new_list)
+        if new:
+            dictionary[entry].append({action: anim})
+        else:
+            dictionary[entry][i][action] = anim
 
 
-load('sprites/player/*.png', 0.07, 0.07, 1)
-load('sprites/bird/*.png', 0.04, 0.05, 6)
+load('sprites/player/fly/*.png', 0.07, 0.07, 1)
+load('sprites/bird/fly/*.png', 0.04, 0.05, 6)
+load('sprites/bird/death/*.png', 0.04, 0.05, 5)
 
 
-def player():
-    return random.choice(all_list[0])
-
-
-def bird():
-    return random.choice(all_list[1])
+def get(item: str):
+    return random.choice(dictionary[item])
 
 
 def resize():
-    for x in all_list:
-        for y in x:
-            y.resize()
+    for value in dictionary.values():
+        for entry in value:
+            for action in entry.values():
+                action.resize()

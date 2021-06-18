@@ -11,6 +11,7 @@ from utils.math_objects import *
 from utils.timer import *
 from ctypes import *
 
+
 SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
 IMG_Init(IMG_INIT_PNG)
 Mix_Init(MIX_INIT_MP3)

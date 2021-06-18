@@ -78,7 +78,7 @@ def game(best: int):
 
         SDL_GL_SwapWindow(window)
 
-        for b in birds:
+        for b in [b for b in birds if b.alive]:
             if pygame.sprite.collide_rect(plane, b):
                 if pygame.sprite.collide_mask(plane, b):
                     plane.hp -= 1
@@ -86,7 +86,7 @@ def game(best: int):
                         running = False
                         pygame.time.wait(1000)
                     else:
-                        birds.remove(b)
+                        b.die()
 
         if not best_sound_played and time.time() - start_time > best:
             Mix_PlayChannel(-1, new_best_sound, 0)

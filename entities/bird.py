@@ -5,9 +5,8 @@ from entities.entity import Entity
 class Bird(Entity):
 
     def __init__(self, *args):
-        super().__init__(ressources.bird(), *args)
+        super().__init__(ressources.get('bird'), *args)
 
-    def update(self, delta):
-        super().update(delta)
-        if self.pos.x + self.anim.ratio.x <= -1:
-            return 1
+    def update(self, delta) -> bool:
+        if super().update(delta) or self.pos.x + self.anim.ratio.x <= -1:
+            return True
