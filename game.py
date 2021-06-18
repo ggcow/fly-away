@@ -59,7 +59,7 @@ def game(best: int):
                 elif event.jaxis.axis == 1:
                     joy_value.y = event.jaxis.value / 32768
             elif event.type == SDL_WINDOWEVENT:
-                if event.window.event == SDL_WINDOWEVENT_RESIZED:
+                if event.window.event in (SDL_WINDOWEVENT_RESIZED, SDL_WINDOWEVENT_SIZE_CHANGED):
                     settings.update_screen(event.window.data1, event.window.data2)
                     ressources.resize()
                     plane.resize()

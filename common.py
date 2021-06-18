@@ -29,15 +29,13 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 
 class Settings:
     def __init__(self):
-        self.flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
+        self.flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
         self.fullscreen = False
         self.muted = False
         self.initial_width = int(screen_info.w / 2)
         self.initial_height = int(screen_info.h / 2)
-        self.window_w = self.initial_width
-        self.window_h = self.initial_height
-        self.current_w = self.window_w
-        self.current_h = self.window_h
+        self.current_w = self.initial_width
+        self.current_h = self.initial_height
         self.joystick = SDL_NumJoysticks() > 0
         if self.joystick:
             self.joy = SDL_JoystickOpen(0)
@@ -49,12 +47,7 @@ class Settings:
         glViewport(0, 0, w, h)
 
     def toggle_fullscreen(self):
-        if self.fullscreen:
-            SDL_SetWindowSize(window, self.window_w, self.window_h)
-        else:
-            self.window_w = settings.current_w
-            self.window_h = settings.current_h
-            SDL_SetWindowSize(window, screen_info.w, screen_info.h)
+        SDL_SetWindowFullscreen(window, (0, SDL_WINDOW_FULLSCREEN_DESKTOP)[self.fullscreen])
         self.fullscreen = not self.fullscreen
 
     def toggle_mute(self):
