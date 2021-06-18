@@ -1,12 +1,11 @@
-import ressources
 from common import *
-from sprite import Sprite
+from entities import ressources
+from entities.entity import Entity
 
 
-class Player(Sprite):
+class Player(Entity):
     deadzone = 0.25
     friction = 0.7
-    image_source = ressources.player()[0]
 
     def __init__(self):
         super().__init__(ressources.player(), 0.5, 1 / 100)
@@ -35,8 +34,5 @@ class Player(Sprite):
 
         super().update(delta)
 
-        self.pos.x = min(max(self.pos.x, -1), 1 - self.w / settings.current_w)
-        self.pos.y = min(max(self.pos.y, -1), 1 - self.h / settings.current_h)
-
-        self.rect.x = int((self.pos.x + 1) / 2 * settings.current_w)
-        self.rect.y = int((1 - self.pos.y) / 2 * settings.current_h) - self.size.y
+        self.pos.x = min(max(self.pos.x, -1), 1 - self.anim.ratio.x * 2)
+        self.pos.y = min(max(self.pos.y, -1), 1 - self.anim.ratio.y * 2)

@@ -36,6 +36,8 @@ def main():
             with open('scores.txt', 'w') as f:
                 f.write(scores.__str__())
 
+    if settings.joystick:
+        SDL_JoystickClose(settings.joy)
     SDL_GL_DeleteContext(context)
     Mix_CloseAudio()
     Mix_Quit()

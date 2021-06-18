@@ -7,9 +7,9 @@ from sdl2.sdlttf import *
 from sdl2.sdlmixer import *
 from sdl2 import *
 from OpenGL.GL import *
+from utils.math_objects import *
+from utils.timer import *
 from ctypes import *
-from math_objects import *
-
 
 SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
 IMG_Init(IMG_INIT_PNG)
@@ -38,6 +38,10 @@ class Settings:
         self.window_h = self.initial_height
         self.current_w = self.window_w
         self.current_h = self.window_h
+        self.joystick = SDL_NumJoysticks() > 0
+        if self.joystick:
+            self.joy = SDL_JoystickOpen(0)
+            SDL_JoystickEventState(SDL_ENABLE)
 
     def update_screen(self, w: int, h: int):
         self.current_w = w

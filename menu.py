@@ -37,27 +37,32 @@ class Menu:
             common_event(event)
 
             keydown = event.type == SDL_KEYDOWN
-            joy_axis_motion = False  # pygame.joystick.get_init() and event.type == pygame.JOYAXISMOTION
-            joy_button_down = False  # pygame.joystick.get_init() and event.type == pygame.JOYBUTTONDOWN
+            joy_axis_motion = settings.joystick and event.type == SDL_JOYAXISMOTION
+            joy_button_down = settings.joystick and event.type == SDL_JOYBUTTONDOWN
+            if joy_axis_motion:
+                jaxis = event.jaxis.axis
+                jvalue = event.jaxis.value / 32768
+            if joy_button_down:
+                jbutton = event.jbutton.button
 
-            if (keydown and event.key.keysym.sym == SDLK_ESCAPE) or (joy_button_down and event.button == 1):
+            if (keydown and event.key.keysym.sym == SDLK_ESCAPE) or (joy_button_down and jbutton == 1):
                 actions.append(Menu.Action.BACK)
-            elif (keydown and event.key.keysym.sym == SDLK_BACKSPACE) or (joy_button_down and event.button == 2):
+            elif (keydown and event.key.keysym.sym == SDLK_BACKSPACE) or (joy_button_down and jbutton == 2):
                 actions.append(Menu.Action.DELETE)
             elif keydown and event.key.keysym.sym == SDLK_DOWN or \
-                    joy_axis_motion and event.axis == 1 and event.value > self.deadzone and self.joy_delay == 0 \
-                    and abs(event.value) > last_joy_value:
+                    joy_axis_motion and jaxis == 1 and jvalue > self.deadzone and self.joy_delay == 0 \
+                    and abs(jvalue) > last_joy_value:
                 actions.append(Menu.Action.DOWN)
                 if joy_axis_motion:
                     self.joy_delay = self.JOYSTICK_DELAY
             elif keydown and event.key.keysym.sym == SDLK_UP or \
-                    joy_axis_motion and event.axis == 1 and event.value < -self.deadzone and self.joy_delay == 0 \
-                    and abs(event.value) > last_joy_value:
+                    joy_axis_motion and jaxis == 1 and jvalue < -self.deadzone and self.joy_delay == 0 \
+                    and abs(jvalue) > last_joy_value:
                 actions.append(Menu.Action.UP)
                 if joy_axis_motion:
                     self.joy_delay = self.JOYSTICK_DELAY
             elif keydown and event.key.keysym.sym in (SDLK_RETURN, SDLK_KP_ENTER) \
-                    or joy_button_down and event.button == 0:
+                    or joy_button_down and jbutton == 0:
                 actions.append(Menu.Action.ENTER)
             elif event.type == SDL_QUIT:
                 actions.append(Menu.Action.QUIT)
@@ -70,8 +75,8 @@ class Menu:
                     self.unicode.append(chr(event.key.keysym.sym))
                 except ValueError:
                     ...
-            if event.type == SDL_JOYAXISMOTION and event.axis == 1:
-                last_joy_value = abs(event.value) + 0.1
+            if event.type == SDL_JOYAXISMOTION and jaxis == 1:
+                last_joy_value = abs(jvalue) + 0.1
         return actions
 
     def main(self, info: dict):
