@@ -16,8 +16,8 @@ class Texture:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
         glBindTexture(GL_TEXTURE_2D, 0)
         self.image = surf
-        self.w: int = surf.w
-        self.h: int = surf.h
+        self.w = surf.w
+        self.h = surf.h
 
     def resize(self, w: int, h: int):
         self.w = w

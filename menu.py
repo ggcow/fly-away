@@ -1,4 +1,3 @@
-import time
 from common import *
 
 font = TTF_OpenFont(file_path('menu_font.ttf'), 30)

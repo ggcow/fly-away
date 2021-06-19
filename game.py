@@ -1,5 +1,4 @@
 import random
-import time
 import pygame
 import parallax
 from setuptools import glob
@@ -21,7 +20,7 @@ def game(best: int):
     new_best_sound = Mix_LoadWAV(file_path('win.wav'))
     best_sound_played = False
 
-    background = parallax.Parallax()
+    background = (parallax.City(), parallax.Mountains())[random.random() < 0.5]
     plane = player.Player()
     running = True
     joy_value = Vec2(0, 0)
