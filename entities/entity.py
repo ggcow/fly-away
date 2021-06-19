@@ -1,5 +1,6 @@
 import random
 import pygame.image
+
 from common import *
 from entities.animation import Animation
 
@@ -23,6 +24,7 @@ class Entity(pygame.sprite.Sprite):
         self.resize()
         self.state = 'fly'
         self.alive = True
+        self.vel_locked = False
 
     def resize(self):
         self.rect.w = self.anim.w
@@ -49,6 +51,12 @@ class Entity(pygame.sprite.Sprite):
         if self.state in self.animations:
             self.anim = self.animations[self.state]
             self.time = 0
+        else:
+            self.time = 1000
 
     def render(self):
         self.anim.render(self.pos.x, self.pos.y, self.index)
+
+    def copy_vel(self, other):
+        self.vel = other.vel
+        self.vel_locked = True

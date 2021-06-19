@@ -68,7 +68,9 @@ def game(best: int):
 
         keys = SDL_GetKeyboardState(ctypes.c_int(0))
         background.update(delta, 0, 1, 2, 4, 5)
-        plane.update(delta, keys, joy_value)
+        if plane.update(delta, keys, joy_value):
+            time.sleep(1)
+            break
         plane.render()
         for b in birds:
             if b.update(delta):
@@ -82,11 +84,10 @@ def game(best: int):
             if pygame.sprite.collide_rect(plane, b):
                 if pygame.sprite.collide_mask(plane, b):
                     plane.hp -= 1
-                    if plane.hp <= 0:
-                        running = False
-                        pygame.time.wait(1000)
-                    else:
-                        b.die()
+                    if plane.hp == 0:
+                        plane.die()
+                        plane.copy_vel(b)
+                    b.die()
 
         if not best_sound_played and time.time() - start_time > best:
             Mix_PlayChannel(-1, new_best_sound, 0)

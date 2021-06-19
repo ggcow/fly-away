@@ -7,8 +7,7 @@ from sdl2.sdlttf import *
 from sdl2.sdlmixer import *
 from sdl2 import *
 from OpenGL.GL import *
-from utils.math_objects import *
-from utils.timer import *
+from utils import *
 from ctypes import *
 
 

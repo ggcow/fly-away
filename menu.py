@@ -239,6 +239,7 @@ class Menu:
 
 
 def blit(x, y, w, h, surf_pointer):
+    image.invert(surf_pointer)
     surf = surf_pointer.contents
     vertex_data = (ctypes.c_float * 16)(
         x, y, x + w, y, x + w, y + h, x, y + h,

@@ -47,9 +47,8 @@ class Parallax:
         self.layers: list[Layer] = []
         file_names = sorted(glob.glob(file_path('parallax/*.png')))
         for i in range(len(file_names)):
-            image = IMG_Load(file_names[i])
-            layer = Layer(image.contents, i / 8)
-            SDL_FreeSurface(image)
+            surf = image.load(file_names[i])
+            layer = Layer(surf, i / 8)
             layer.scrolling = 0
             self.layers.append(layer)
 
