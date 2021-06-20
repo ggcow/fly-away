@@ -11,13 +11,12 @@ class Mask:
         memmove(buff, self.tex.image.pixels, sizeof(buff))
         self.image = pygame.image.frombuffer(bytearray(buff), (self.tex.image.w, self.tex.image.h), 'RGBA')
         self.masks = []
-
-    def resize(self):
-        image = pygame.transform.scale(
-            self.image, (self.tex.w * self.anim.sprites, self.tex.h))
-        self.masks.clear()
         for i in range(self.anim.sprites):
             surf = pygame.Surface((self.tex.w, self.tex.h))
             surf.set_colorkey((0, 0, 0))
-            surf.blit(image, (0, 0), pygame.Rect(i * self.tex.w, 0, self.tex.w, self.tex.h))
+            surf.blit(self.image, (0, 0), self.image.get_rect())
             self.masks.append(pygame.mask.from_surface(surf))
+
+    def resize(self):
+        for i in range(len(self.masks)):
+            self.masks[i] = self.masks[i].scale((self.tex.w, self.tex.h))
