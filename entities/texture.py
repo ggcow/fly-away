@@ -5,10 +5,8 @@ class Texture:
 
     def __init__(self, path: str):
         surf = image.load(path)
-
         self.id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.id)
-
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.w, surf.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, c_void_p(surf.pixels))
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)

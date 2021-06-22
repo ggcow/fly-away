@@ -1,19 +1,18 @@
 import random
-import pygame
+import time
 import parallax
 from setuptools import glob
 from entities import bird, player, ressources
 from common import *
 from OpenGL.GL import *
 from utils.timer import Timer
-import pygame.sprite
 
 music_names = sorted(glob.glob(file_path('music/**')))
 
 
 def game(best: int):
     start_time = time.time()
-    delta = 1000 / 61
+    delta = 1000 / 610
 
     ressources.resize()
 
@@ -38,9 +37,9 @@ def game(best: int):
 
     while running:
 
-        for i in range(add_bird_timer.update()):
+        for i in range(add_bird_timer.update(delta)):
             birds.append(bird.Bird(random.random() * 2 - 1, 0.01))
-        for i in range(more_bird_timer.update()):
+        for i in range(more_bird_timer.update(delta)):
             if add_bird_timer.delay >= 1.25:
                 add_bird_timer.delay *= 0.8
 
@@ -80,13 +79,12 @@ def game(best: int):
         SDL_GL_SwapWindow(window)
 
         for b in [b for b in birds if b.alive]:
-            if pygame.sprite.collide_rect(plane, b):
-                if pygame.sprite.collide_mask(plane, b):
-                    plane.hp -= 1
-                    if plane.hp == 0:
-                        plane.die()
-                        plane.copy_vel(b)
-                    b.die()
+            if plane.collide(b):
+                plane.hp -= 1
+                if plane.hp == 0:
+                    plane.die()
+                    plane.copy_vel(b)
+                b.die()
 
         if not best_sound_played and time.time() - start_time > best:
             Mix_PlayChannel(-1, new_best_sound, 0)

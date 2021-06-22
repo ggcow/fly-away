@@ -12,7 +12,7 @@ class Player(Entity):
         self.hp = 3
         self.max_speed = 100
 
-    def update(self, delta: float, keys: [POINTER(c_int)], joy_value: Vec2):
+    def update(self, delta: float, keys: [POINTER(c_int)], joy_value: Vec2) -> bool:
         if not self.vel_locked:
             if abs(joy_value.x) < Player.deadzone and abs(joy_value.y) < Player.deadzone:
                 joy_value.x = 0
@@ -33,8 +33,12 @@ class Player(Entity):
             if self.vel.length() > self.max_speed:
                 self.vel *= self.max_speed / self.vel.length()
 
+        if Entity.update(self, delta):
+            return True
+
         self.pos.x = min(max(self.pos.x, -1), 1 - self.anim.ratio.x * 2)
         self.pos.y = min(max(self.pos.y, -1), 1 - self.anim.ratio.y * 2)
+        self.rect.x = max(min(self.rect.x, settings.current_w), 0)
+        self.rect.y = max(min(self.rect.y, settings.current_h), 0)
 
-        if super().update(delta):
-            return True
+        return False

@@ -1,21 +1,21 @@
-import random
-import pygame.image
+from __future__ import annotations
 
+import random
 from common import *
+from entities import mask
 from entities.animation import Animation
 
 
-class Entity(pygame.sprite.Sprite):
+class Entity:
     image_source = None
     sprites = 1
 
     def __init__(self, animations: dict[str: Animation], y: float, speed: float):
-        super().__init__()
         self.animations = animations
         anim = animations['fly']
         self.speed = speed
         self.vel = Vec2(-20, 0)
-        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.rect = SDL_Rect(0, 0, 0, 0)
         self.pos = Vec2(1, (y * (2 - anim.h / settings.current_h) - anim.h / settings.current_h) / 2)
         self.time = random.random() * 1000
         self.index = 0
@@ -27,8 +27,8 @@ class Entity(pygame.sprite.Sprite):
         self.vel_locked = False
 
     def resize(self):
-        self.rect.w = self.anim.w
-        self.rect.h = self.anim.h
+        self.rect.w = self.anim.tex.w
+        self.rect.h = self.anim.tex.h
 
     def update(self, delta) -> bool:
         self.time += int(delta)
@@ -40,10 +40,14 @@ class Entity(pygame.sprite.Sprite):
         self.pos.y += self.vel.y * delta / 1000 * self.speed
 
         self.index = math.floor(self.time / 1000 * self.anim.sprites)
-        self.mask = self.anim.mask.masks[self.index]
+        if self.anim.mask is not None:
+            self.mask = self.anim.mask.masks[self.index]
 
-        self.rect.x = int((1 + self.pos.x) / 2 * settings.current_w)
-        self.rect.y = int((1 - self.pos.y) / 2 * settings.current_h) - self.rect.h / 2
+        # self.rect.x = round((1 + self.pos.x) * settings.current_w / 2)
+        # self.rect.y = round((1 - self.pos.y - self.anim.ratio.x * 2) * settings.current_h / 2)
+
+        self.rect.x = round((1 + self.pos.x) * settings.current_w / 2)
+        self.rect.y = round((1 - self.pos.y) * settings.current_h / 2) - self.rect.h
 
     def die(self):
         self.state = 'death'
@@ -60,3 +64,11 @@ class Entity(pygame.sprite.Sprite):
     def copy_vel(self, other):
         self.vel = other.vel
         self.vel_locked = True
+
+    def collide(self, other: Entity) -> bool:
+        return self.anim.mask is not None and not (
+                (self.rect.x >= other.rect.x + other.rect.w)
+                or (self.rect.x + self.rect.w <= other.rect.x)
+                or (self.rect.y >= other.rect.y + other.rect.h)
+                or (self.rect.y + self.rect.h <= other.rect.y)) \
+               and mask.collide(self.mask, other.mask, self.rect, other.rect)

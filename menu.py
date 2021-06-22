@@ -1,3 +1,4 @@
+import time
 from common import *
 
 font = TTF_OpenFont(file_path('menu_font.ttf'), 30)
@@ -113,27 +114,25 @@ class Menu:
 
             for i in range(n):
                 text = ('→ ' + options[i] + ' ←', options[i])[i != position]
-                surf_pointer = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color())
-                surf = surf_pointer.contents
+                surf = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color()).contents
                 w = surf.w / settings.current_w * 2
                 x = - w / 2
                 h = surf.h / settings.current_h * 2
                 y = h + (20 + surf.h) * (n / 2 - i) / settings.current_h * 2 - 0.1
 
-                blit(x, y, w, h, surf_pointer)
+                blit(x, y, w, h, surf)
 
             if info['player_score'] > 0:
                 text = 'New best for ' + \
                        info['player_name'] + \
                        ' : ' if info['player_score'] == info['scores'][info['player_name']] else ''
                 text += str(round(info['player_score'], 2))
-                surf_pointer = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color())
-                surf = surf_pointer.contents
+                surf = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color()).contents
                 w = surf.w / settings.current_w * 2
                 x = - w / 2
                 h = surf.h / settings.current_h * 2
                 y = 0.7
-                blit(x, y, w, h, surf_pointer)
+                blit(x, y, w, h, surf)
 
             SDL_GL_SwapWindow(window)
             SDL_Delay(20)
@@ -151,13 +150,12 @@ class Menu:
 
             for i in range(n):
                 text = list(scores.keys())[i] + ' : %.2f' % list(scores.values())[i]
-                surf_pointer = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color())
-                surf = surf_pointer.contents
+                surf = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color()).contents
                 w = surf.w / settings.current_w * 2
                 x = - w / 2
                 h = surf.h / settings.current_h * 2
                 y = h + (20 + surf.h) * (n / 2 - i) / settings.current_h * 2
-                blit(x, y, w, h, surf_pointer)
+                blit(x, y, w, h, surf)
 
             SDL_GL_SwapWindow(window)
             SDL_Delay(20)
@@ -194,13 +192,12 @@ class Menu:
                 text = ('→ ' + options[i] + ' : ', '  ' + options[i] + ' : ')[i != position]
                 if i == options.index('Name'):
                     text += player_name
-                surf_pointer = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color())
-                surf = surf_pointer.contents
+                surf = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color()).contents
                 w = surf.w / settings.current_w * 2
                 x = -0.3
                 h = surf.h / settings.current_h * 2
                 y = h + (20 + surf.h) * (n / 2 - i) / settings.current_h * 2
-                blit(x, y, w, h, surf_pointer)
+                blit(x, y, w, h, surf)
 
             SDL_GL_SwapWindow(window)
             SDL_Delay(20)
@@ -237,9 +234,8 @@ class Menu:
             SDL_Delay(20)
 
 
-def blit(x, y, w, h, surf_pointer):
-    image.invert(surf_pointer)
-    surf = surf_pointer.contents
+def blit(x, y, w, h, surf: SDL_Surface):
+    image.invert(surf)
     vertex_data = (ctypes.c_float * 16)(
         x, y, x + w, y, x + w, y + h, x, y + h,
         0, 0, 1, 0, 1, 1, 0, 1
@@ -247,7 +243,6 @@ def blit(x, y, w, h, surf_pointer):
     glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
     glBindTexture(GL_TEXTURE_2D, image_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.w, surf.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, c_void_p(surf.pixels))
-    SDL_FreeSurface(surf_pointer)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4)

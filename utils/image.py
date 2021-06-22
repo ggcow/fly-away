@@ -5,15 +5,12 @@ from sdl2.sdlimage import IMG_Load
 
 def load(path: str) -> SDL_Surface:
     image = IMG_Load(path)
-    image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0)
+    image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0).contents
     invert(image)
+    return image
 
-    return image.contents
 
-
-def invert(image: POINTER(SDL_Surface)):
-    surf = image.contents
-
+def invert(surf: SDL_Surface):
     pitch = surf.pitch
     temp = (c_byte * pitch)()
 

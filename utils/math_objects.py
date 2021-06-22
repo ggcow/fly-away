@@ -37,6 +37,9 @@ class Vec2:
         self.y /= other
         return self
 
+    def __repr__(self):
+        return 'Vec2(x=' + str(self.x) + ', y=' + str(self.y) + ')'
+
     def length(self):
         return math.hypot(self.x, self.y)
 

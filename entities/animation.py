@@ -4,26 +4,27 @@ from entities import mask, texture
 
 class Animation:
 
-    def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2):
+    def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2, mask_neeed: bool):
         self.tex = tex
-        self.sprites: int = sprites
+        self.sprites = sprites
         self.format = format
         self.ratio = ratio
         self.w = 0
         self.h = 0
-        self.mask = mask.Mask(self)
+        self.mask = mask.Mask(self) if mask_neeed else None
         self.resize()
 
     def resize(self):
-        self.w = settings.current_w * self.ratio.x * 2
-        self.h = settings.current_h * self.ratio.y * 2
-        self.tex.resize(int(self.w / 2), int(self.h / 2))
-        self.mask.resize()
-        
+        self.w = settings.current_w * self.ratio.x
+        self.h = settings.current_h * self.ratio.y
+        self.tex.resize(round(self.w), round(self.h))
+        if self.mask is not None:
+            self.mask.resize()
+
     def render(self, x: float, y: float, index: int):
         x_tex, y_tex = (index % self.format.x) / self.format.x, (self.format.y - 1 - (index // self.format.x)) / self.format.y
         w_tex, h_tex = 1 / self.format.x, 1 / self.format.y
-        w, h = self.w / settings.current_w, self.h / settings.current_h
+        w, h = self.w * 2 / settings.current_w, self.h * 2 / settings.current_h
 
         vertex_data = (ctypes.c_float * 16)(
             x, y,

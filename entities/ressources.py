@@ -16,7 +16,7 @@ def load(path: str, ratio: Vec2, sprites: int, sprite_format: Vec2):
         new = True
     for i in range(len(file_names)):
         tex = Texture(file_names[i])
-        anim = Animation(tex, sprites, sprite_format, ratio)
+        anim = Animation(tex, sprites, sprite_format, ratio, action == 'fly')
         if len(file_names) == 1 and not new:
             for entity in dictionary[entry]:
                 entity[action] = anim
@@ -28,7 +28,7 @@ def load(path: str, ratio: Vec2, sprites: int, sprite_format: Vec2):
 
 
 load('sprites/player/fly/*.png', Vec2(0.07, 0.07), 1, Vec2(1, 1))
-load('sprites/player/death/*.png', Vec2(0.08, 0.08), 8, Vec2(3, 3))
+load('sprites/player/death/*.png', Vec2(0.08, 0.08), 9, Vec2(3, 3))
 load('sprites/bird/fly/*.png', Vec2(0.04, 0.05), 6, Vec2(6, 1))
 load('sprites/bird/death/*.png', Vec2(0.04, 0.05), 5, Vec2(5, 1))
 
