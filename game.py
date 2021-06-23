@@ -12,7 +12,7 @@ music_names = sorted(glob.glob(file_path('music/**')))
 
 def game(best: int):
     start_time = time.time()
-    delta = 1000 / 610
+    delta = 1000 / 61
 
     ressources.resize()
 
