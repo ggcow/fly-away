@@ -1,5 +1,8 @@
 import os
 import sys
+if getattr(sys, 'frozen', False):
+    os.chdir(sys._MEIPASS)
+    os.environ['PYSDL2_DLL_PATH'] = os.path.join(os.getcwd(), 'dll')
 from enum import Enum
 import opengl
 from sdl2.sdlimage import *
@@ -79,10 +82,7 @@ except AttributeError:
 
 
 def file_path(path):
-    relative_path = 'assets/' + path
-    if os.path.exists(relative_path):
-        return relative_path.encode()
-    return os.path.join(base_path, relative_path).encode()
+    return os.path.join('assets', path).encode()
 
 
 def common_event(event: SDL_Event):
