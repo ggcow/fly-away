@@ -1,11 +1,10 @@
 from entities import ressources
-from entities.entity import Entity
+from entities import Entity
 
 
 class Bird(Entity):
-
     def __init__(self, *args):
-        super().__init__(ressources.get('bird'), *args)
+        super().__init__(ressources.get('mountains', 'bird'), *args)
 
     def update(self, delta) -> bool:
         if super().update(delta) or self.pos.x + self.anim.ratio.x <= -1:

@@ -3,7 +3,6 @@ from entities import mask, texture
 
 
 class Animation:
-
     def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2, mask_neeed: bool):
         self.tex = tex
         self.sprites = sprites
@@ -11,14 +10,15 @@ class Animation:
         self.ratio = ratio
         self.w = 0
         self.h = 0
-        self.mask = mask.Mask(self) if mask_neeed else None
+        if mask_neeed:
+            self.mask = mask.Mask(self)
         self.resize()
 
     def resize(self):
         self.w = settings.current_w * self.ratio.x
         self.h = settings.current_h * self.ratio.y
         self.tex.resize(round(self.w), round(self.h))
-        if self.mask is not None:
+        if hasattr(self, 'mask'):
             self.mask.resize()
 
     def render(self, x: float, y: float, index: int):

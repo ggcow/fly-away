@@ -1,14 +1,14 @@
 from common import *
 from entities import ressources
-from entities.entity import Entity
+from entities import Entity
 
 
 class Player(Entity):
     deadzone = 0.25
     friction = 0.7
 
-    def __init__(self):
-        super().__init__(ressources.get('player'), 0.5, 1 / 100)
+    def __init__(self, level: str):
+        super().__init__(ressources.get(level, 'player'), 0.5, 1 / 100)
         self.hp = 3
         self.max_speed = 100
 

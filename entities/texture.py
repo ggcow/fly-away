@@ -2,7 +2,6 @@ from common import *
 
 
 class Texture:
-
     def __init__(self, path: str):
         surf = image.load(path)
         self.id = glGenTextures(1)
