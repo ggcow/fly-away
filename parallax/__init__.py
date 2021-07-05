@@ -43,6 +43,7 @@ class Layer:
 
 class Parallax:
     def __init__(self):
+        self.path = str(type(self))[str(type(self)).rfind('.') + 1:str(type(self)).rfind('\'')].lower()
         self.layers: list[Layer] = []
         file_names = sorted(glob.glob(file_path(os.path.join(self.path, 'parallax', '*.png'))))
         for i in range(len(file_names)):
@@ -52,6 +53,8 @@ class Parallax:
             layer = Layer(tex, speed / 8, y)
             layer.scrolling = 0
             self.layers.append(layer)
+        self.first_half = tuple(range(len(self.layers)))
+        self.second_half = ()
 
     def gen_height(self, i: int) -> float:
         return 1
@@ -60,13 +63,15 @@ class Parallax:
         return i
 
     def update(self, delta, *indexes):
-        if len(indexes) == 0:
-            for layer in self.layers:
-                layer.update(delta)
-        else:
-            for index in indexes:
-                if index < len(self.layers):
-                    self.layers[index].update(delta)
+        for index in indexes:
+            if index < len(self.layers):
+                self.layers[index].update(delta)
+
+    def update1(self, delta):
+        self.update(delta, *self.first_half)
+
+    def update2(self, delta):
+        self.update(delta, *self.second_half)
 
 from parallax.city import *
 from parallax.mountains import *

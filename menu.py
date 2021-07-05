@@ -219,13 +219,12 @@ class Menu:
             glClear(GL_COLOR_BUFFER_BIT)
             if i < len(credit):
                 text = credit[last_i]
-                surf_pointer = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color())
-                surf = surf_pointer.contents
+                surf = TTF_RenderUTF8_Blended(font, text.encode(), SDL_Color()).contents
                 w = surf.w / settings.current_w * 2
                 h = surf.h / settings.current_h * 2
                 x = - w / 2
                 y = h
-                blit(x, y, w, h, surf_pointer)
+                blit(x, y, w, h, surf)
             i += 0.01
             if i >= len(credit) + 2:
                 i = 0

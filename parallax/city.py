@@ -3,11 +3,12 @@ from parallax import Parallax
 
 class City(Parallax):
     def __init__(self):
-        self.path = 'city'
-        super().__init__()
+        Parallax.__init__(self)
+        # self.first_half = ()
+        # self.second_half = ()
 
     def gen_height(self, i: int) -> float:
-        return (1, 0)[i]
+        return (1, 0.2)[i]
 
     def gen_speed(self, i: int) -> float:
         return (0.5, 2)[i]

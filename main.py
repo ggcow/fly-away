@@ -15,7 +15,7 @@ def main():
         with open('scores.txt', 'r') as f:
             scores = ast.literal_eval(f.readline())
 
-    player_score: int = 0
+    player_score: float = 0
     m = menu.Menu()
 
     while True:
@@ -26,6 +26,8 @@ def main():
             except IndexError:
                 best_score = 0
             player_score = game.game(best_score)
+            if player_score == 0:
+                break
         else:
             break
 

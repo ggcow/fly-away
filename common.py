@@ -12,6 +12,7 @@ from sdl2 import *
 from OpenGL.GL import *
 from utils import *
 from ctypes import *
+from random import random as rand
 
 
 SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)
@@ -96,3 +97,4 @@ def common_event(event: SDL_Event):
 class Command(Enum):
     BACK = '!back'
     EXIT = '!exit'
+    NEXT = '!next'

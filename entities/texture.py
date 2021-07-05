@@ -2,8 +2,10 @@ from common import *
 
 
 class Texture:
-    def __init__(self, path: str):
+    def __init__(self, path: str, flipped: bool = False):
         surf = image.load(path)
+        if flipped:
+            image.flip(surf)
         self.id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.w, surf.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, c_void_p(surf.pixels))

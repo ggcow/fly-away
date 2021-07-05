@@ -8,7 +8,7 @@ class Player(Entity):
     friction = 0.7
 
     def __init__(self, level: str):
-        super().__init__(ressources.get(level, 'player'), 0.5, 1 / 100)
+        Entity.__init__(self, ressources.get(level, 'player'), Vec2(-1, 0.5), Vec2(0, 0))
         self.hp = 3
         self.max_speed = 100
 
@@ -42,3 +42,4 @@ class Player(Entity):
         self.rect.y = max(min(self.rect.y, settings.current_h), 0)
 
         return False
+

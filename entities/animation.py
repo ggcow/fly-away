@@ -3,14 +3,14 @@ from entities import mask, texture
 
 
 class Animation:
-    def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2, mask_neeed: bool):
+    def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2, mask_needed: bool):
         self.tex = tex
         self.sprites = sprites
         self.format = format
         self.ratio = ratio
         self.w = 0
         self.h = 0
-        if mask_neeed:
+        if mask_needed:
             self.mask = mask.Mask(self)
         self.resize()
 

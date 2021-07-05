@@ -7,14 +7,16 @@ from entities.texture import Texture
 dictionary = {}
 
 
-def load(level: str, path: str, ratio: Vec2, sprites: int = 1, sprite_format: Vec2 = Vec2(1, 1)):
+def load(level: str, path: str, ratio: Vec2, sprites: int = 1, sprite_format: Vec2 = Vec2(1, 1), mask: bool = False, flipped: bool = False):
     file_names = glob.glob(file_path(os.path.join(level, path)))
     pack = path.split('/')
     if len(pack) == 4:
         _, entry, action, _ = path.split('/')
-    elif len(pack) == 3:
+    else:
         _, entry, _ = path.split('/')
-        action = 'default'
+        action = 'fly'
+    if flipped:
+        action += '_flipped'
     new_entry = False
     if level not in dictionary:
         dictionary[level] = {}
@@ -22,8 +24,8 @@ def load(level: str, path: str, ratio: Vec2, sprites: int = 1, sprite_format: Ve
         dictionary[level][entry] = []
         new_entry = True
     for i in range(len(file_names)):
-        tex = Texture(file_names[i])
-        anim = Animation(tex, sprites, sprite_format, ratio, action == 'fly')
+        tex = Texture(file_names[i], flipped)
+        anim = Animation(tex, sprites, sprite_format, ratio, mask)
         if len(file_names) == 1 and not new_entry:
             for entity in dictionary[level][entry]:
                 entity[action] = anim
@@ -34,15 +36,19 @@ def load(level: str, path: str, ratio: Vec2, sprites: int = 1, sprite_format: Ve
                 dictionary[level][entry][i][action] = anim
 
 
-for l in ('mountains', 'city'):
-    load(l, 'sprites/player/fly/*.png', Vec2(0.07, 0.07))
+for level_name in ('mountains', 'city'):
+    load(level_name, 'sprites/player/fly/*.png', Vec2(0.07, 0.07), mask=True)
 
-load('mountains', 'sprites/bird/fly/*.png', Vec2(0.04, 0.05), 6, Vec2(6, 1))
+load('mountains', 'sprites/bird/fly/*.png', Vec2(0.04, 0.05), 6, Vec2(6, 1), mask=True)
 load('mountains', 'sprites/bird/death/*.png', Vec2(0.04, 0.05), 5, Vec2(5, 1))
-load('city', 'sprites/police/*.png', Vec2(0.07, 0.07))
-load('city', 'sprites/truck/*.png', Vec2(0.07, 0.07))
-load('city', 'sprites/red/*.png', Vec2(0.07, 0.07))
+load('city', 'sprites/police/*.png', Vec2(0.12, 0.07), mask=True)
+load('city', 'sprites/police/*.png', Vec2(0.12, 0.07), mask=True, flipped=True)
+load('city', 'sprites/truck/*.png', Vec2(0.07, 0.07), mask=True)
+load('city', 'sprites/red/*.png', Vec2(0.07, 0.07), mask=True)
+load('city', 'sprites/truck/*.png', Vec2(0.07, 0.07), mask=True, flipped=True)
+load('city', 'sprites/red/*.png', Vec2(0.07, 0.07), mask=True, flipped=True)
 load('global', 'sprites/explosion/*.png', Vec2(0.08, 0.08), 9, Vec2(3, 3))
+load('global', 'sprites/hp/*.png', Vec2(0.02, 0.03))
 
 
 def get(level: str, item: str):
