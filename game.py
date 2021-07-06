@@ -16,7 +16,8 @@ def game(best: int) -> float:
     start_time = time.time()
     ressources.resize()
     hp = 3
-    for level in (Mountains(), City()):
+    for level in (City(),
+                  ):
         command = play(level, best, hp)
         if command == Command.EXIT:
             return 0

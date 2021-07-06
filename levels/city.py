@@ -20,7 +20,7 @@ class City(Level):
                 flipped = False
                 speed = -170 + rand() * 20 - 10
             else:
-                x = -1
+                x = -2
             self.flying.append(Car(Vec2(x, rand() * 2 - 1), Vec2(speed, 0), flipped))
 
         return Level.update(self, delta, *args)
