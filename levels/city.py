@@ -1,4 +1,4 @@
-from entities.police import Police
+from entities.car import Car
 from levels import *
 
 
@@ -10,9 +10,17 @@ class City(Level):
 
     def update(self, delta, *args):
         for i in range(self.add_police_timer.update(delta)):
-            if rand() < 0.5:
-                self.flying.append(Police(Vec2(1, rand() * 2 - 1), Vec2(-170 + rand() * 20 - 10, 0)))
+            r = rand()
+            x = 1
+            speed = 20 + rand() * 6 - 3
+            flipped = True
+            if 3 * r < 1:
+                speed = -speed
+            elif 3 * r < 2:
+                flipped = False
+                speed = -170 + rand() * 20 - 10
             else:
-                self.flying.append(Police(Vec2(1, rand() * 2 - 1), Vec2(-20 + rand() * 6 - 3, 0), True))
+                x = -1
+            self.flying.append(Car(Vec2(x, rand() * 2 - 1), Vec2(speed, 0), flipped))
 
         return Level.update(self, delta, *args)

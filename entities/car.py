@@ -4,7 +4,7 @@ from entities import ressources
 from entities import Entity
 
 
-class Police(Entity):
+class Car(Entity):
     def __init__(self, *args):
         Entity.__init__(self, ressources.get('city', random.choice(('police', 'truck', 'red'))), *args)
 

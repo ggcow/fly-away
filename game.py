@@ -16,7 +16,7 @@ def game(best: int) -> float:
     start_time = time.time()
     ressources.resize()
     hp = 3
-    for level in (City(),):
+    for level in (Mountains(), City()):
         command = play(level, best, hp)
         if command == Command.EXIT:
             return 0
@@ -69,7 +69,7 @@ def play(level: levels.Level, best: int, hp: int) -> Command:
             Mix_PlayChannel(-1, new_best_sound, 0)
             best_sound_played = True
 
-        if t - level_time >= 20:
+        if t - level_time >= 60:
             return Command.NEXT
 
         frames += 1
