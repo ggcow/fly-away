@@ -41,6 +41,7 @@ for level_name in ('mountains', 'city'):
 
 load('mountains', 'sprites/bird/fly/*.png', Vec2(0.04, 0.05), 6, Vec2(6, 1), mask=True)
 load('mountains', 'sprites/bird/death/*.png', Vec2(0.04, 0.05), 5, Vec2(5, 1))
+load('mountains', 'sprites/bunny/fly/*.png', Vec2(0.04, 0.05), 2, Vec2(2, 1), mask=True, flipped=True)
 load('mountains', 'sprites/bird/fly/*.png', Vec2(0.04, 0.05), 6, Vec2(6, 1), mask=True, flipped=True)
 load('mountains', 'sprites/bird/death/*.png', Vec2(0.04, 0.05), 5, Vec2(5, 1), flipped=True)
 load('city', 'sprites/police/*.png', Vec2(0.12, 0.07), mask=True)

@@ -18,7 +18,6 @@ class Entity:
         self.vel = vel
         self.rect = SDL_Rect(0, 0, 0, 0)
         self.pos = Vec2(-1 - anim.ratio.x * 2 if pos.x == -2 else pos.x, pos.y - (anim.ratio.y * (pos.y + 1)))
-        # self.pos = pos
         self.time = random.random() * 1000
         self.index = 0
         self.anim = anim
