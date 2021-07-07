@@ -9,6 +9,6 @@ class HpBar(Entity):
 
     def update(self, delta: float, hp: int):
         for i in range(hp):
-            Entity.update(self, delta)
+            Entity.update(self, delta, vy_modifier=False)
             self.pos.x += 2 * self.anim.ratio.x + 0.01
         self.pos.x = -0.99

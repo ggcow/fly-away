@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import math
 import random
+import time
+
 from common import *
 from entities import mask, ressources, animation
 
@@ -14,7 +17,7 @@ class Entity:
         anim = animations['fly' + ('', '_flipped')[flipped]]
         self.vel = vel
         self.rect = SDL_Rect(0, 0, 0, 0)
-        self.pos = Vec2(-1 - anim.ratio.x * 2 if pos.x == -2 else pos.x, pos.y - (anim.ratio.y * 2 * (pos.y + 1)))
+        self.pos = Vec2(-1 - anim.ratio.x * 2 if pos.x == -2 else pos.x, pos.y - (anim.ratio.y * (pos.y + 1)))
         # self.pos = pos
         self.time = random.random() * 1000
         self.index = 0
@@ -25,15 +28,24 @@ class Entity:
         self.dead = False
         self.vel_locked = False
 
+        self.test_start_time = time.time()
+        self.test_time = self.test_start_time
+
     def resize(self):
         self.rect.w = self.anim.tex.w
         self.rect.h = self.anim.tex.h
 
-    def update(self, delta) -> bool:
+    def update(self, delta, vy_modifier: bool = True) -> bool:
         self.time += int(delta)
         if self.time > 1000 and self.dead:
             return True
         self.time %= 1000
+
+        if vy_modifier:
+            t = time.time()
+            vx = math.sin(self.test_time - self.test_start_time) - math.sin(t - self.test_start_time)
+            self.test_time = t
+            self.vel.y += vx * 3
 
         self.pos.x += self.vel.x * delta / 100000
         self.pos.y += self.vel.y * delta / 100000

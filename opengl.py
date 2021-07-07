@@ -54,5 +54,6 @@ def init():
     glUseProgram(shader_program)
     glEnable(GL_TEXTURE_2D)
     glEnable(GL_BLEND)
+    glEnable(GL_CULL_FACE)
 
 
