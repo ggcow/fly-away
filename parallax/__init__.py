@@ -5,11 +5,12 @@ from entities.texture import Texture
 
 
 class Layer:
-    def __init__(self, tex: Texture, speed: float, y: float):
+    def __init__(self, tex: Texture, speed: float, y1: float, y2: float):
         super().__init__()
         self.w = tex.w
         self.h = tex.h
-        self.y = y
+        self.y1 = y1
+        self.y2 = y2
         self.speed = speed / 2
         self.scrolling = 0.
         self.tex = tex
@@ -29,7 +30,7 @@ class Layer:
     def render(self):
         portion = settings.current_w * self.h / settings.current_h / self.w
         vertex_data = (c_float * 16)(
-            -1, -1, 1, -1, 1, self.y, -1, self.y,
+            -1, self.y2, 1, self.y2, 1, self.y1, -1, self.y1,
             self.scrolling, 0,
             self.scrolling + portion, 0,
             self.scrolling + portion, 1,
@@ -47,17 +48,19 @@ class Parallax:
         self.layers: list[Layer] = []
         file_names = sorted(glob.glob(file_path(os.path.join(self.path, 'parallax', '*.png'))))
         for i in range(len(file_names)):
-            y, speed = self.gen_height(i), self.gen_speed(i)
+            y1, y2, speed = self.gen_height_from_top(i), self.gen_height_from_bottom(i), self.gen_speed(i)
             tex = Texture(file_names[i])
-            tex.resize(int(tex.w * (y + 1) / 2), tex.h)
-            layer = Layer(tex, speed / 8, y)
+            tex.resize(int(tex.w * (y2 - y1) / 2), tex.h)
+            layer = Layer(tex, speed / 8, y1, y2)
             layer.scrolling = 0
             self.layers.append(layer)
         self.first_half = tuple(range(len(self.layers)))
-        self.second_half = ()
 
-    def gen_height(self, i: int) -> float:
+    def gen_height_from_top(self, i: int) -> float:
         return 1
+
+    def gen_height_from_bottom(self, i: int) -> float:
+        return -1
 
     def gen_speed(self, i: int) -> float:
         return i
@@ -71,7 +74,8 @@ class Parallax:
         self.update(delta, *self.first_half)
 
     def update2(self, delta):
-        self.update(delta, *self.second_half)
+        self.update(delta, *(x for x in range(len(self.layers)) if x not in self.first_half))
 
 from parallax.city import *
 from parallax.mountains import *
+from parallax.forest import *

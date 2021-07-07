@@ -4,7 +4,7 @@ from entities.bunny import Bunny
 
 class Mountains(Level):
     def __init__(self):
-        self.background = parallax.Mountains()
+        self.background = parallax.Forest()
         Level.__init__(self)
         self.add_bird_timer = Timer(1000)
         self.add_bunny_timer = Timer(5000)

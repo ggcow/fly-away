@@ -1,5 +1,4 @@
 import glob
-
 import parallax
 from entities import *
 
