@@ -21,12 +21,12 @@ class Player(Entity):
             self.vel.x += joy_value.x * delta
             self.vel.y -= joy_value.y * delta
 
-            if keys[SDL_SCANCODE_UP] or keys[SDL_SCANCODE_DOWN]:
+            if keys[SDL_SCANCODE_UP] ^ keys[SDL_SCANCODE_DOWN]:
                 self.vel.y += (delta, -delta)[keys[SDL_SCANCODE_DOWN]] * \
-                              (1, 0.707)[keys[SDL_SCANCODE_LEFT] or keys[SDL_SCANCODE_RIGHT]]
-            if keys[SDL_SCANCODE_LEFT] or keys[SDL_SCANCODE_RIGHT]:
+                              (1, 0.707)[keys[SDL_SCANCODE_LEFT] ^ keys[SDL_SCANCODE_RIGHT]]
+            if keys[SDL_SCANCODE_LEFT] ^ keys[SDL_SCANCODE_RIGHT]:
                 self.vel.x += (delta, -delta)[keys[SDL_SCANCODE_LEFT]] * \
-                              (1, 0.707)[keys[SDL_SCANCODE_UP] or keys[SDL_SCANCODE_DOWN]]
+                              (1, 0.707)[keys[SDL_SCANCODE_UP] ^ keys[SDL_SCANCODE_DOWN]]
 
             self.vel *= Player.friction ** (delta / 100)
 

@@ -1,7 +1,8 @@
-import time
+from levels.mountains import *
+from levels.city import *
+from levels.forest import *
 import levels
-from levels.city import City
-from levels.mountains import Mountains
+from levels import *
 from entities import ressources
 from common import *
 from OpenGL.GL import *
@@ -16,7 +17,7 @@ def game(best: int) -> float:
     start_time = time.time()
     ressources.resize()
     hp = 3
-    for level in (Mountains(), City()):
+    for level in (Mountains(), City(), Forest()):
         command = play(level, best, hp)
         if command == Command.EXIT:
             return 0

@@ -27,8 +27,8 @@ class Entity:
         self.dead = False
         self.vel_locked = False
 
-        self.test_start_time = time.time()
-        self.test_time = self.test_start_time
+        self.vy_start_time = time.time()
+        self.vy_time = self.vy_start_time
 
     def resize(self):
         self.rect.w = self.anim.tex.w
@@ -42,8 +42,8 @@ class Entity:
 
         if vy_modifier:
             t = time.time()
-            vx = math.sin(self.test_time - self.test_start_time) - math.sin(t - self.test_start_time)
-            self.test_time = t
+            vx = math.sin(self.vy_time - self.vy_start_time) - math.sin(t - self.vy_start_time)
+            self.vy_time = t
             self.vel.y += vx * 3
 
         self.pos.x += self.vel.x * delta / 100000

@@ -13,4 +13,4 @@ class Forest(Parallax):
         return (-1, -1, -1, -0.1, -0.2, 0.6, 0.2, 0, -1, -1)[i]
 
     def gen_speed(self, i: int) -> float:
-        return i - max(0, 0.8*i-3)
+        return i - max(0., 0.8*i-3)
