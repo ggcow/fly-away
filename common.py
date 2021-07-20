@@ -34,7 +34,7 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 class Settings:
     def __init__(self):
         self.flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
-        self.fullscreen = False
+        self.fullscreen = True
         self.muted = False
         self.initial_width = int(screen_info.w / 2)
         self.initial_height = int(screen_info.h / 2)
