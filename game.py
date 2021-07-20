@@ -47,6 +47,8 @@ def play(level: levels.Level, best: int, hp: int) -> Command:
             if event.type == SDL_KEYDOWN:
                 if event.key.keysym.sym == SDLK_ESCAPE:
                     return Command.BACK
+                if event.key.keysym.sym == SDLK_TAB:
+                    return Command.NEXT
             elif event.type == SDL_QUIT:
                 return Command.EXIT
             elif event.type == SDL_JOYAXISMOTION:
