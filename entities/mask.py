@@ -5,7 +5,7 @@ class Mask:
     def __init__(self, anim):
         self.anim = anim
         self.tex = anim.tex
-        self.masks = []
+        self.data = []
         self.source_masks = []
         surf = anim.tex.image
         alpha = cast(surf.pixels, POINTER(c_ubyte))[3:surf.h * surf.pitch:4]
@@ -22,13 +22,13 @@ class Mask:
             #     print()
             # print()
         for m in self.source_masks:
-            self.masks.append(m.copy())
+            self.data.append(m.copy())
 
     def resize(self):
         self.scale(self.tex.w, self.tex.h)
 
     def scale(self, w: int, h: int):
-        self.masks.clear()
+        self.data.clear()
         for mask in self.source_masks:
             new_mask = []
             ny = dny = 0
@@ -46,7 +46,7 @@ class Mask:
                     ny += 1
                     dny += self.h
                 dy += h
-            self.masks.append(new_mask)
+            self.data.append(new_mask)
             # for y in range(h):
             #     for x in range(w):
             #         print('XX' if new_mask[y * w + x] > 0 else '..', end='')

@@ -1,41 +1,51 @@
 from common import *
-from entities import mask, texture
+from entities import mask
+from texture import Texture
 
 
 class Animation:
-    def __init__(self, tex: texture.Texture, sprites: int, format: Vec2, ratio: Vec2, mask_needed: bool):
+    def __init__(self,
+                 tex: Texture,
+                 sprites: int,
+                 format: Vec2,
+                 ratio: Vec2,
+                 duration: int,
+                 mask_needed: bool):
         self.tex = tex
         self.sprites = sprites
         self.format = format
         self.ratio = ratio
-        self.w = 0
-        self.h = 0
+        self.w = 2 * self.ratio.x
+        self.h = 2 * self.ratio.y
+        self.w_tex = 1 / self.format.x
+        self.h_tex = 1 / self.format.y
+        self.duration = duration
         if mask_needed:
             self.mask = mask.Mask(self)
         self.resize()
 
     def resize(self):
-        self.w = settings.current_w * self.ratio.x
-        self.h = settings.current_h * self.ratio.y
-        self.tex.resize(round(self.w), round(self.h))
+        self.tex.resize(
+            round(settings.current_w * self.ratio.x),
+            round(settings.current_h * self.ratio.y)
+        )
         if hasattr(self, 'mask'):
             self.mask.resize()
 
     def render(self, x: float, y: float, index: int):
-        x_tex, y_tex = (index % self.format.x) / self.format.x, (self.format.y - 1 - (index // self.format.x)) / self.format.y
-        w_tex, h_tex = 1 / self.format.x, 1 / self.format.y
-        w, h = self.w * 2 / settings.current_w, self.h * 2 / settings.current_h
+        x_tex = (index % self.format.x) / self.format.x
+        y_tex = (self.format.y - 1 - (index // self.format.x)) / self.format.y
 
         vertex_data = (ctypes.c_float * 16)(
             x, y,
-            x + w, y,
-            x + w, y + h,
-            x, y + h,
+            x + self.w, y,
+            x + self.w, y + self.h,
+            x, y + self.h,
 
             x_tex, y_tex,
-            x_tex + w_tex, y_tex,
-            x_tex + w_tex, y_tex + h_tex,
-            x_tex, y_tex + h_tex
+            x_tex + self.w_tex, y_tex,
+            x_tex + self.w_tex, y_tex + self.h_tex,
+            x_tex, y_tex + self.h_tex
         )
         glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
         glBindTexture(GL_TEXTURE_2D, self.tex.id)

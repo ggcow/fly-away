@@ -1,8 +1,8 @@
 from levels.mountains import *
 from levels.city import *
 from levels.forest import *
-import levels
-from levels import *
+import time
+from levels.level import Level
 from entities import ressources
 from common import *
 from OpenGL.GL import *
@@ -23,12 +23,14 @@ def game(best: int) -> float:
             return 0
         if command == Command.BACK:
             break
+        if command == Command.NEXT:
+            print('Tricheur !')
         hp = level.plane.hp
 
     return time.time() - start_time
 
 
-def play(level: levels.Level, best: int, hp: int) -> Command:
+def play(level: Level, best: int, hp: int) -> Command:
     global best_sound_played, start_time
     level_time = time.time()
     frame_time = 0

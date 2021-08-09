@@ -1,5 +1,5 @@
 from entities import ressources
-from entities import Entity
+from entities.entity import Entity
 
 
 class Bunny(Entity):

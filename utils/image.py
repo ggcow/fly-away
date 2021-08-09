@@ -8,9 +8,6 @@ from sdl2.sdlimage import IMG_Load
 def load(path: str) -> SDL_Surface:
     image = IMG_Load(path)
     image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0).contents
-    if image.format.contents.BytesPerPixel != 4:
-        print('Image', path, 'has', image.format.contents.BytesPerPixel, 'bytes per pixel')
-        sys.exit(1)
     invert(image)
     return image
 

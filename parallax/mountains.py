@@ -1,4 +1,4 @@
-from parallax import Parallax
+from parallax.parallax import Parallax
 
 
 class Mountains(Parallax):

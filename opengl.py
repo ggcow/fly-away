@@ -26,7 +26,7 @@ def init():
                in vec2 uv;
                uniform sampler2D tex;
                void main() {
-                   fragColor = texture(tex, uv);
+                    fragColor = texture(tex, uv);
                }
            """, GL_FRAGMENT_SHADER)
 

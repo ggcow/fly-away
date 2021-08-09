@@ -1,17 +1,13 @@
-from levels import *
 from entities.bunny import Bunny
+from levels.level import *
 
 
 class Forest(Level):
     def __init__(self):
-        self.background = parallax.Forest()
         Level.__init__(self)
         self.add_bird_timer = Timer(1000)
-        self.add_bunny_timer = Timer(5000)
 
     def update(self, delta, *args) -> bool:
-        for i in range(self.add_bunny_timer.update(delta)):
-            self.flying.append(Bunny(Vec2(rand(), 1.1), Vec2(-20, -30), True))
         for i in range(self.add_bird_timer.update(delta)):
             speed = -20 + rand() * 6 - 3
             flipped = False

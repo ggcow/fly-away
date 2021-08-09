@@ -162,7 +162,7 @@ class Menu:
 
     def name(self, player_name: str):
         position = 0
-        options = ('Name', 'Team')
+        options = ('Name',)
         n = len(options)
         while True:
             for event in self.poll_events():

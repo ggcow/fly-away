@@ -1,6 +1,6 @@
 from common import *
 from entities import ressources
-from entities import Entity
+from entities.entity import Entity
 
 
 class Player(Entity):
@@ -8,12 +8,14 @@ class Player(Entity):
     friction = 0.7
 
     def __init__(self, level: str):
-        Entity.__init__(self, ressources.get(level, 'player'), Vec2(0, 0.5), Vec2(0, 0))
+        Entity.__init__(self,
+                        ressources.get(level, 'player'),
+                        Vec2(0, 0), Vec2(0, 0))
         self.hp = 3
         self.max_speed = 100
 
     def update(self, delta: float, keys: [POINTER(c_int)], joy_value: Vec2) -> bool:
-        if not self.vel_locked:
+        if not self.dead:
             if abs(joy_value.x) < Player.deadzone and abs(joy_value.y) < Player.deadzone:
                 joy_value.x = 0
                 joy_value.y = 0
