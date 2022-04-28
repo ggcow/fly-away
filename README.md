@@ -19,4 +19,4 @@ Commands :
 * Arrow : Move
 * TAB : Next level (cheat)
 
-###### [Video link](https://streamable.com/z8kynh)
+###### [Video link](https://youtu.be/fM9e1LMPsRc)
