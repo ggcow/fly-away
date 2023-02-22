@@ -1,6 +1,7 @@
 from common import *
 from entities import ressources
 from entities.entity import Entity
+from typing import List
 
 
 class Player(Entity):
@@ -14,7 +15,7 @@ class Player(Entity):
         self.hp = 3
         self.max_speed = 100
 
-    def update(self, delta: float, keys: [POINTER(c_int)], joy_value: Vec2) -> bool:
+    def update(self, delta: float, keys: List[ctypes.c_uint8], joy_value: Vec2) -> bool:
         if not self.dead:
             if abs(joy_value.x) < Player.deadzone and abs(joy_value.y) < Player.deadzone:
                 joy_value.x = 0

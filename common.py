@@ -4,14 +4,18 @@ import sys
 # Si le jeu est compilé par pyinstaller
 if getattr(sys, 'frozen', False):
     os.chdir(sys._MEIPASS)
-    os.environ['PYSDL2_DLL_PATH'] = os.path.join(os.getcwd(), 'dll')
+    os.environ['PYSDL2_DLL_PATH'] = 'dll'
+
+from sys import platform
+if platform == "win32":
+    os.environ['PYSDL2_DLL_PATH'] = 'dll'
 
 from enum import Enum
 import opengl
+from sdl2 import *
 from sdl2.sdlimage import *
 from sdl2.sdlttf import *
 from sdl2.sdlmixer import *
-from sdl2 import *
 from OpenGL.GL import *
 from utils import *
 from ctypes import *

@@ -1,4 +1,5 @@
 from common import *
+from utils import image
 
 
 class Texture:

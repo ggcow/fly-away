@@ -1,5 +1,6 @@
 import time
 from common import *
+from utils import image
 
 font = TTF_OpenFont(file_path('menu_font.ttf'), 30)
 
@@ -232,13 +233,16 @@ class Menu:
             SDL_GL_SwapWindow(window)
             SDL_Delay(20)
 
+def power_two_floor(val):
+    return int(2 ** int(math.log(val, 2)))
 
 def blit(x, y, w, h, surf: SDL_Surface):
-    image.invert(surf)
+    surf = image.convert_to_rgba32(surf)
     vertex_data = (ctypes.c_float * 16)(
         x, y, x + w, y, x + w, y + h, x, y + h,
         0, 0, 1, 0, 1, 1, 0, 1
     )
+
     glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(c_float), vertex_data)
     glBindTexture(GL_TEXTURE_2D, image_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf.w, surf.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, c_void_p(surf.pixels))

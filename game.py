@@ -35,7 +35,7 @@ def play(level: Level, best: int, hp: int) -> Command:
     level_time = time.time()
     frame_time = 0
     frames = 0
-    delta = 10000 / 605
+    delta = 25 / 3
     last_time = start_time
     joy_value = Vec2(0, 0)
 

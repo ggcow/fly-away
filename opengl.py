@@ -2,13 +2,8 @@ from OpenGL.GL import *
 from OpenGL.GL import shaders
 from ctypes import sizeof, c_float, c_void_p
 
-vao, vbo = 0, 0
-shader_program = None
-
 
 def init():
-    global vao, vbo
-    global shader_program
     vertex_shader = shaders.compileShader("""
                #version 330
                layout(location = 0) in vec2 pos;
@@ -38,10 +33,7 @@ def init():
     vao = glGenVertexArrays(1)
     vbo = glGenBuffers(1)
 
-    vertex_data = (c_float * 16)(
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0
-    )
+    vertex_data = (c_float * 16)()
 
     glBindVertexArray(vao)
     glBindBuffer(GL_ARRAY_BUFFER, vbo)

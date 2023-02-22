@@ -6,11 +6,12 @@ from sdl2.sdlimage import IMG_Load
 
 
 def load(path: str) -> SDL_Surface:
-    image = IMG_Load(path)
-    image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0).contents
-    invert(image)
-    return image
+    return convert_to_rgba32(IMG_Load(path))
 
+def convert_to_rgba32(surf: SDL_Surface) -> SDL_Surface:
+    surf = SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_RGBA32, 0).contents
+    invert(surf)
+    return surf
 
 def invert(surf: SDL_Surface):
     pitch = surf.pitch
