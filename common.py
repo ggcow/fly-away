@@ -65,7 +65,7 @@ Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)
 screen_info = SDL_DisplayMode()
 SDL_GetCurrentDisplayMode(0, screen_info)
 
-settings = Settings(int(screen_info.w / 2), int(screen_info.h / 2))
+settings = Settings(800, 600)
 Mix_Volume(-1, settings.music_volume)
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
